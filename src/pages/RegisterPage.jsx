@@ -3,6 +3,25 @@ import React, { useState } from "react";
 import { registerUser } from "../services/api";
 
 export default function RegistrationPage() {
+  const [errors, setErrors] = useState({});
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email";
+    }
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.location.trim()) newErrors.location = "Location is required";
+    if (!formData.expectation.trim())
+      newErrors.expectation = "Tell us your expectation";
+
+    return newErrors;
+  };
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,7 +40,13 @@ export default function RegistrationPage() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formErrors = validateForm();
 
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setErrors({});
     try {
       const response = await registerUser(formData);
       console.log(response);
@@ -29,7 +54,6 @@ export default function RegistrationPage() {
       if (response.success) {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
-
         setFormData({
           firstName: "",
           lastName: "",
@@ -84,12 +108,19 @@ export default function RegistrationPage() {
                   type="text"
                   name="firstName"
                   id="firstName"
-                  className="bg-white-50 border border-gray-300 text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.firstName ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="John"
                   required
                   value={formData.firstName}
                   onChange={handleChange}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -102,12 +133,17 @@ export default function RegistrationPage() {
                   type="text"
                   name="lastName"
                   id="lastName"
-                  className="bg-white-50 border border-gray-300 text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.lastName ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Doe"
                   required
                   value={formData.lastName}
                   onChange={handleChange}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+                )}
               </div>
               <div>
                 <label
@@ -123,8 +159,13 @@ export default function RegistrationPage() {
                   placeholder="Email Address"
                   value={formData.email}
                   onChange={handleChange}
-                  className="bg-white-50 border border-gray-300 text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
               <div>
                 <label
@@ -141,8 +182,13 @@ export default function RegistrationPage() {
                   value={formData.church}
                   onChange={handleChange}
                   required
-                  className="bg-white-50 border rounded border-gray-300 text-gray-900 text-2xl focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.church ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.church && (
+                  <p className="mt-1 text-sm text-red-500">{errors.church}</p>
+                )}
               </div>
               <div>
                 <label
@@ -154,12 +200,18 @@ export default function RegistrationPage() {
                 <input
                   type="tel"
                   id="phone"
-                  className="bg-white-50 border border-gray-300 text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  c
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.phone ? "border-red-500" : "border-gray-300"
+                  }`}
                   name="phone"
                   placeholder="Phone Number"
                   value={formData.phone}
                   onChange={handleChange}
                 />
+                {errors.phone && (
+                  <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                )}
               </div>
               <div>
                 <label
@@ -175,9 +227,16 @@ export default function RegistrationPage() {
                   placeholder="What do you expect from the event?"
                   value={formData.expectation}
                   onChange={handleChange}
-                  className="bg-white-50 border border-gray-300 text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.expectation ? "border-red-500" : "border-gray-300"
+                  }`}
                   required
                 />
+                {errors.expectation && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.expectation}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -194,8 +253,13 @@ export default function RegistrationPage() {
                   value={formData.location}
                   onChange={handleChange}
                   required
-                  className="bg-white-50 border rounded border-gray-300 text-gray-900 text-2xl focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.location ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.location && (
+                  <p className="mt-1 text-sm text-red-500">{errors.location}</p>
+                )}
               </div>
               <div>
                 <label
@@ -212,8 +276,15 @@ export default function RegistrationPage() {
                   value={formData.firstTime}
                   onChange={handleChange}
                   required
-                  className="bg-white-50 border rounded border-gray-300 text-gray-900 text-2xl focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.firstTime ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.firstTime && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.firstTime}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -230,8 +301,13 @@ export default function RegistrationPage() {
                   value={formData.about}
                   onChange={handleChange}
                   required
-                  className="bg-white-50 border rounded border-gray-300 text-gray-900 text-2xl focus:outline-none focus:border-[#00B425]  block w-full p-2.5"
+                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                    errors.about ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
+                {errors.about && (
+                  <p className="mt-1 text-sm text-red-500">{errors.about}</p>
+                )}
               </div>
             </section>
             <button
