@@ -1,5 +1,6 @@
 // RegistrationPage.jsx
 import React, { useState } from "react";
+import { registerUser } from "../services/api";
 
 export default function RegistrationPage() {
   const [formData, setFormData] = useState({
@@ -18,23 +19,35 @@ export default function RegistrationPage() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      church: "",
-      firstTime: "",
-      location: "",
-      expectation: "",
-      about: "",
-    })
-    setTimeout(() => setSubmitted(false), 2000);
-    // Later: Send to backend or localForage
+
+    try {
+      const response = await registerUser(formData);
+      console.log(response);
+
+      if (response.success) {
+        setSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          church: "",
+          firstTime: "",
+          location: "",
+          expectation: "",
+          about: "",
+        });
+
+        setTimeout(() => setSubmitted(false), 2000);
+      }
+    } catch (err) {
+      console.error("Registration failed:", err);
+      alert("Something went wrong.");
+    }
   };
   return (
     <>
