@@ -1,4 +1,4 @@
-```markdown
+
 # AW Landing Page
 
 A responsive, modern landing page for the Aroma Worshippers project, built with Vite, React, and Tailwind CSS.
@@ -31,23 +31,27 @@ A responsive, modern landing page for the Aroma Worshippers project, built with 
 ## 🚀 Getting Started
 
 1. Clone the repo:
+
     ```bash
     git clone https://github.com/Aroma-Worshippers/aw-landing-page.git
     cd aw-landing-page
     ```
 
 2. Install dependencies:
+
     ```bash
     npm install
     ```
 
 3. Track large files with Git LFS (if not already set up):
+
     ```bash
     git lfs install
     git lfs track "*.mp4"
     ```
 
 4. Run the development server:
+
     ```bash
     npm run dev
     ```
@@ -131,4 +135,3 @@ npm run preview  # to verify production build locally
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
-```
