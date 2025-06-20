@@ -6,7 +6,7 @@ export default function Header() {
   const isLandingPage = location.pathname === '/';
     return (
       <>
-        <header className="flex items-center justify-between p-4">
+        <header className="sticky top-0 z-50 flex items-center justify-between p-4 bg-white shadow-md">
           <Link to="/">
             <img src="/assets/logo png 1 1.png" alt="Logo" />
           </Link>
