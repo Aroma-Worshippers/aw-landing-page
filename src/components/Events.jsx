@@ -23,14 +23,14 @@ export default function Events() {
           </p>
           <Link
             to="/register"
-            className="px-6 py-2 my-4 text-white bg-[#00B425] font-semibold rounded inline-block w-auto"
+            className="hidden px-4 py-2 text-white bg-[#00B425] rounded md:inline-block hover:shadow-xl mt-4"
           >
             Register Now
           </Link>
         </section>
         <section className="p-4 mt-4">
-          <img src="/assets/MMC (2).png" className="justify-center w-full"/>
-              </section>
+          <img src="/assets/MMC (2).png" className="justify-center w-full" />
+        </section>
       </section>
     </>
   );

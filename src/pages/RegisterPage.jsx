@@ -1,4 +1,6 @@
 // RegistrationPage.jsx
+//Update firstTime to boolean (radio), take out locatiom, expectation and 
+
 import React, { useState } from "react";
 import { registerUser } from "../services/api";
 
