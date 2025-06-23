@@ -1,5 +1,5 @@
 //Make gallery to fetch images from an endpoint.
-//Store images in thecloud
+//Store images in the cloud
 //Have a gallery page that opens onclick of 'show more'
 //Update the backend to have a gallery endpoint
 

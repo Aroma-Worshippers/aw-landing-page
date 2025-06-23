@@ -16,10 +16,10 @@ export default function RegistrationPage() {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Enter a valid email";
     }
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.location.trim()) newErrors.location = "Location is required";
-    if (!formData.expectation.trim())
-      newErrors.expectation = "Tell us your expectation";
+    if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
+    // if (!formData.location.trim()) newErrors.location = "Location is required";
+    // if (!formData.expectation.trim())
+    //   newErrors.expectation = "Tell us your expectation";
 
     return newErrors;
   };
@@ -30,10 +30,10 @@ export default function RegistrationPage() {
     email: "",
     phone: "",
     church: "",
-    firstTime: "",
-    location: "",
-    expectation: "",
-    about: "",
+    firstTimer: "",
+    // location: "",
+    // expectation: "",
+    // about: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -62,10 +62,10 @@ export default function RegistrationPage() {
           email: "",
           phone: "",
           church: "",
-          firstTime: "",
-          location: "",
-          expectation: "",
-          about: "",
+          firstTimer: "",
+          // location: "",
+          // expectation: "",
+          // about: "",
         });
 
         setTimeout(() => setSubmitted(false), 2000);
@@ -194,127 +194,75 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label
-                  htmlFor="phone"
+                  htmlFor="phoneNumber"
                   className="block mb-2 text-2xl font-medium"
                 >
                   Phone number
                 </label>
                 <input
                   type="tel"
-                  id="phone"
+                  id="phoneNumber"
                   c
                   className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
-                    errors.phone ? "border-red-500" : "border-gray-300"
+                    errors.phoneNumber ? "border-red-500" : "border-gray-300"
                   }`}
-                  name="phone"
+                  name="phoneNumber"
                   placeholder="Phone Number"
-                  value={formData.phone}
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                 />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="expectation"
-                  className="block mb-2 text-2xl font-medium"
-                >
-                  What are your expectations from the event?
-                </label>
-                <input
-                  type="text"
-                  name="expectation"
-                  id="expectation"
-                  placeholder="What do you expect from the event?"
-                  value={formData.expectation}
-                  onChange={handleChange}
-                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
-                    errors.expectation ? "border-red-500" : "border-gray-300"
-                  }`}
-                  required
-                />
-                {errors.expectation && (
+                {errors.phoneNumber && (
                   <p className="mt-1 text-sm text-red-500">
-                    {errors.expectation}
+                    {errors.phoneNumber}
                   </p>
                 )}
               </div>
               <div>
                 <label
-                  htmlFor="location"
-                  className="block mb-2 text-2xl font-medium"
-                >
-                  Location
-                </label>
-                <input
-                  type="text"
-                  name="location"
-                  id="location"
-                  placeholder="Location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
-                    errors.location ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.location && (
-                  <p className="mt-1 text-sm text-red-500">{errors.location}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="firstTime"
+                  htmlFor="firstTimer"
                   className="block mb-2 text-2xl font-medium"
                 >
                   Is this your first time attending?
                 </label>
-                <input
-                  type="text"
-                  name="firstTime"
-                  id="firstTime"
-                  placeholder="Is this your first time attending?"
-                  value={formData.firstTime}
-                  onChange={handleChange}
-                  required
-                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
-                    errors.firstTime ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.firstTime && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.firstTime}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="about"
-                  className="block mb-2 text-2xl font-medium"
-                >
-                  How did you hear about the event?
-                </label>
-                <input
-                  type="text"
-                  name="about"
-                  id="about"
-                  placeholder="How did you hear about the event?"
-                  value={formData.about}
-                  onChange={handleChange}
-                  required
-                  className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
-                    errors.about ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.about && (
-                  <p className="mt-1 text-sm text-red-500">{errors.about}</p>
-                )}
+                <div>
+                  <input
+                    type="radio"
+                    name="firstTimer"
+                    id="firstTimer"
+                    value="Yes"
+                    checked={formData.firstTimer === "Yes"}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label
+                    htmlFor="firstTimer"
+                    className="inline-block ml-4 text-lg"
+                  >
+                    Yes
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="firstTimer"
+                    id="firstTimer"
+                    value="No"
+                    checked={formData.firstTimer === "No"}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label
+                    htmlFor="firstTimer"
+                    className="inline-block ml-4 text-lg"
+                  >
+                    No
+                  </label>
+                </div>
               </div>
             </section>
             <button
               type="submit"
-              className="text-white bg-[#00B425]  hover:bg-green-800 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-2xl w-full px-5 py-2.5 text-center"
+              className="text-white bg-[#00B425]  hover:bg-green-800 hover:cursor-pointer font-medium rounded-lg text-2xl w-full md:w-70 m-auto inline-block px-5 py-2.5 text-center"
             >
               Submit
             </button>

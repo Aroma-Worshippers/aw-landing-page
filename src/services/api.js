@@ -1,4 +1,4 @@
-// This is a mock up. Change when backend is ready
+// This is a mock up. Update when backend is ready
 // Remember to update the .env file also
 
 

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import RegistrationPage from "../pages/RegisterPage";
 
 export default function Events() {
   return (
