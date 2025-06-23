@@ -1,7 +1,7 @@
 
 # AW Landing Page
 
-A responsive, modern landing page for the Aroma Worshippers project, built with Vite, React, and Tailwind CSS.
+A responsive, modern landing page for the Aroma Worshippers Music Ministry Intl, built with Vite, React, and Tailwind CSS.
 
 ---
 
