@@ -1,5 +1,4 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import RegisterPage from "../pages/RegisterPage";
 
 export default function Header() {
   const location = useLocation();
