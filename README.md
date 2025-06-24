@@ -83,7 +83,7 @@ A responsive, modern landing page for the Aroma Worshippers Music Ministry Intl,
 
 ## 🧪 Simulating the API
 
-The frontend calls `registerUser` from `src/services/api.js`, which currently returns a mock response. Replace it when your Node.js backend is ready:
+The frontend calls `registerUser` from `src/services/api.js`, which currently returns a mock response. 
 
 ```js
 // src/services/api.js
@@ -117,16 +117,6 @@ Suitable for platforms like Vercel, Netlify, or Surge:
 npm run build
 npm run preview  # to verify production build locally
 ```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repo
-2. Create a feature branch: `git checkout -b feature/YourFeature`
-3. Add changes with tests/documentation
-4. Commit & push: `git push origin feature/YourFeature`
-5. Submit a Pull Request
 
 ---
 
