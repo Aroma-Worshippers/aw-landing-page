@@ -67,6 +67,7 @@ export default function RegistrationPage() {
       },
       (error) => {
         console.error("Registration failed:", error);
+        window.scrollTo({ top: 0, behavior: "smooth" });
         const serverMsg =
           error.response?.data?.message ||
           "Something went wrong. Please try again.";
