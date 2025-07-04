@@ -33,33 +33,32 @@ export default function RegistrationPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     const formErrors = validateForm();
-
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
-
     setErrors({});
-
     registerUser(
       formData,
-      (response) => {
-        if (response.success) {
-          setSubmitted(true);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          setFormData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            phoneNumber: "",
-            church: "",
-            firstTimer: "",
-          });
-          setTimeout(() => setSubmitted(false), 2000);
-        } else {
-          alert("Registration failed. Please try again.");
-        }
+      (res) => {
+        const user = res.data.data;
+          if (res.status === 201 && user) {
+            setSubmitted(true);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setFormData({
+              firstName: "",
+              lastName: "",
+              email: "",
+              phoneNumber: "",
+              church: "",
+              firstTimer: "",
+            });
+            setTimeout(() => setSubmitted(false), 2000);
+          } else {
+            alert("Registration failed. Please try again.");
+          }
       },
       (error) => {
         console.error("Registration failed:", error);
