@@ -4,6 +4,7 @@ import { registerUser } from "../services/api";
 export default function RegistrationPage() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -33,42 +34,44 @@ export default function RegistrationPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
     setErrors({});
+    setLoading(true);
     registerUser(
       formData,
       (res) => {
         const user = res.data.data;
-          if (res.status === 201 && user) {
-            setSubmitted(true);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-            setFormData({
-              firstName: "",
-              lastName: "",
-              email: "",
-              phoneNumber: "",
-              church: "",
-              firstTimer: "",
-            });
-            setTimeout(() => setSubmitted(false), 5000);
-          } else {
-            alert("Registration failed. Please try again.");
-          }
+        if (res.status === 201 && user) {
+          setSubmitted(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            phoneNumber: "",
+            church: "",
+            firstTimer: "",
+          });
+          setTimeout(() => setSubmitted(false), 5000);
+        } else {
+          alert("Registration failed. Please try again.");
+        } 
+        setLoading(false);
       },
       (error) => {
         console.error("Registration failed:", error);
         alert("Something went wrong. Please try again.");
+        setLoading(false);
       }
     );
   };
 
   return (
-    
     <section className="text-black bg-white">
       <main className="max-w-6xl py-2 mx-auto">
         <div className="mb-6">
@@ -87,14 +90,17 @@ export default function RegistrationPage() {
           <section className="grid gap-6 mx-4 mb-8 md:grid-cols-2">
             {/* First Name */}
             <div>
-              <label htmlFor="firstName" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="firstName"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 First name
               </label>
               <input
                 type="text"
                 name="firstName"
                 id="firstName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="John"
@@ -109,14 +115,17 @@ export default function RegistrationPage() {
 
             {/* Last Name */}
             <div>
-              <label htmlFor="lastName" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="lastName"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 Last name
               </label>
               <input
                 type="text"
                 name="lastName"
                 id="lastName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
                   errors.lastName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Doe"
@@ -131,7 +140,10 @@ export default function RegistrationPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 Email address
               </label>
               <input
@@ -141,7 +153,7 @@ export default function RegistrationPage() {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -152,7 +164,10 @@ export default function RegistrationPage() {
 
             {/* Church */}
             <div>
-              <label htmlFor="church" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="church"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 Church
               </label>
               <input
@@ -163,7 +178,7 @@ export default function RegistrationPage() {
                 value={formData.church}
                 onChange={handleChange}
                 required
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
                   errors.church ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -174,7 +189,10 @@ export default function RegistrationPage() {
 
             {/* Phone Number */}
             <div>
-              <label htmlFor="phoneNumber" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="phoneNumber"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 Phone number
               </label>
               <input
@@ -184,18 +202,23 @@ export default function RegistrationPage() {
                 placeholder="Phone Number"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
                   errors.phoneNumber ? "border-red-500" : "border-gray-300"
                 }`}
               />
               {errors.phoneNumber && (
-                <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.phoneNumber}
+                </p>
               )}
             </div>
 
             {/* First Timer (Radio) */}
             <div>
-              <label htmlFor="firstTimer" className="block mb-2 text-xl font-medium md:text-2xl">
+              <label
+                htmlFor="firstTimer"
+                className="block mb-2 text-xl font-medium md:text-2xl"
+              >
                 Is this your first time attending?
               </label>
               <div>
@@ -208,7 +231,10 @@ export default function RegistrationPage() {
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="firstTimerYes" className="inline-block ml-4 text-lg">
+                <label
+                  htmlFor="firstTimerYes"
+                  className="inline-block ml-4 text-lg"
+                >
                   Yes
                 </label>
               </div>
@@ -222,7 +248,10 @@ export default function RegistrationPage() {
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="firstTimerNo" className="inline-block ml-4 text-lg">
+                <label
+                  htmlFor="firstTimerNo"
+                  className="inline-block ml-4 text-lg"
+                >
                   No
                 </label>
               </div>
@@ -231,9 +260,42 @@ export default function RegistrationPage() {
 
           <button
             type="submit"
-            className="text-white bg-[#00B425] hover:bg-green-800 hover:cursor-pointer font-medium rounded-lg text-2xl w-full md:w-70 m-auto inline-block px-5 py-2.5 text-center"
+            disabled={loading}
+            className={`text-white font-medium rounded-lg text-2xl w-full md:w-70 m-auto inline-block px-5 py-2.5 text-center 
+    ${
+      loading
+        ? "bg-gray-400 cursor-wait"
+        : "bg-[#00B425] hover:bg-green-800 hover:cursor-pointer"
+    }
+  `}
           >
-            Submit
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg
+                  className="w-5 h-5 text-white animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16z"
+                  />
+                </svg>
+                <span>Submitting...</span>
+              </div>
+            ) : (
+              "Submit"
+            )}
           </button>
         </form>
       </main>
