@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 export default function Events() {
   return (
     <>
-      <section className="p-12 bg-white border-b" id="events">
-        <h2 className="pt-12 text-4xl font-bold uppercase">Events</h2>
+      <section className="p-5 bg-white border-b" id="events">
+        <h2 className="pt-12 text-xl font-bold uppercase md:text-4xl">Events</h2>
         <p className="underline decoration-[#00B425] text-xl">
           Find out about our latest and upcoming events
         </p>

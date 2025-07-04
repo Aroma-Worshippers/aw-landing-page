@@ -4,8 +4,8 @@ import { HiOutlineMusicNote } from "react-icons/hi";
 export default function Mission() {
   return (
     <>
-      <section className="p-12 bg-[#EDEDED80]">
-        <h2 className="p-2 text-4xl font-bold text-center uppercase">
+      <section className="p-5 bg-[#EDEDED80]">
+        <h2 className="p-2 text-xl font-bold text-center uppercase md:text-4xl">
           Our Missions and Objectives
         </h2>
         <p className="text-lg font-semibold text-center">

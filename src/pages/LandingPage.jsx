@@ -12,7 +12,7 @@ export default function LandingPage() {
     <>
      {/* Hero */}
       <Hero />
-      <div className="p-12 text-black bg-white">
+      <div className="text-black bg-white">
         {/* About */}
         <About />
         {/* Mission */}

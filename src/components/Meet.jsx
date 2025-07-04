@@ -2,7 +2,7 @@ export default function Meet() {
   return (
     <>
       <section className="px-4 py-12">
-        <h2 className="text-4xl font-bold underline  decoration-[#00B425] mb-12 uppercase">
+        <h2 className="text-2xl md:text-4xl font-bold underline  decoration-[#00B425] mb-12 uppercase">
           Meet Our President
         </h2>
         <div className="grid grid-cols-1 gap-12 p-4 md:grid-cols-2 justify-items-center">

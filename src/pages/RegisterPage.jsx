@@ -69,8 +69,8 @@ export default function RegistrationPage() {
 
   return (
     
-    <section className="min-h-screen text-black bg-white">
-      <main className="max-w-6xl px-8 py-2 mx-auto">
+    <section className="text-black bg-white">
+      <main className="max-w-6xl py-2 mx-auto">
         <div className="mb-6">
           <img
             src="/assets/MMC.png"
@@ -83,22 +83,18 @@ export default function RegistrationPage() {
             Registration successful
           </div>
         )}
-        <h2 className="mb-4 text-xl font-semibold">
-          To register for MMC, kindly fill out your details below.
-        </h2>
-
-        <form onSubmit={handleSubmit}>
-          <section className="grid gap-6 mb-6 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="p-4">
+          <section className="grid gap-6 mx-4 mb-8 md:grid-cols-2">
             {/* First Name */}
             <div>
-              <label htmlFor="firstName" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="firstName" className="block mb-2 text-xl font-medium md:text-2xl">
                 First name
               </label>
               <input
                 type="text"
                 name="firstName"
                 id="firstName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="John"
@@ -113,14 +109,14 @@ export default function RegistrationPage() {
 
             {/* Last Name */}
             <div>
-              <label htmlFor="lastName" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="lastName" className="block mb-2 text-xl font-medium md:text-2xl">
                 Last name
               </label>
               <input
                 type="text"
                 name="lastName"
                 id="lastName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
                   errors.lastName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Doe"
@@ -135,7 +131,7 @@ export default function RegistrationPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="email" className="block mb-2 text-xl font-medium md:text-2xl">
                 Email address
               </label>
               <input
@@ -145,7 +141,7 @@ export default function RegistrationPage() {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -156,7 +152,7 @@ export default function RegistrationPage() {
 
             {/* Church */}
             <div>
-              <label htmlFor="church" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="church" className="block mb-2 text-xl font-medium md:text-2xl">
                 Church
               </label>
               <input
@@ -167,7 +163,7 @@ export default function RegistrationPage() {
                 value={formData.church}
                 onChange={handleChange}
                 required
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
                   errors.church ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -178,7 +174,7 @@ export default function RegistrationPage() {
 
             {/* Phone Number */}
             <div>
-              <label htmlFor="phoneNumber" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="phoneNumber" className="block mb-2 text-xl font-medium md:text-2xl">
                 Phone number
               </label>
               <input
@@ -188,7 +184,7 @@ export default function RegistrationPage() {
                 placeholder="Phone Number"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425]  block w-full p-2.5 border ${
+                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-md  block w-full p-2.5 border ${
                   errors.phoneNumber ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -199,7 +195,7 @@ export default function RegistrationPage() {
 
             {/* First Timer (Radio) */}
             <div>
-              <label htmlFor="firstTimer" className="block mb-2 text-2xl font-medium">
+              <label htmlFor="firstTimer" className="block mb-2 text-xl font-medium md:text-2xl">
                 Is this your first time attending?
               </label>
               <div>
