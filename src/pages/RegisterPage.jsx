@@ -55,7 +55,7 @@ export default function RegistrationPage() {
               church: "",
               firstTimer: "",
             });
-            setTimeout(() => setSubmitted(false), 2000);
+            setTimeout(() => setSubmitted(false), 5000);
           } else {
             alert("Registration failed. Please try again.");
           }
@@ -68,6 +68,7 @@ export default function RegistrationPage() {
   };
 
   return (
+    
     <section className="min-h-screen text-black bg-white">
       <main className="max-w-6xl px-8 py-2 mx-auto">
         <div className="mb-6">
@@ -77,13 +78,11 @@ export default function RegistrationPage() {
             className="w-full max-h-[400px] object-contain"
           />
         </div>
-
         {submitted && (
           <div className="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded">
             Registration successful
           </div>
         )}
-
         <h2 className="mb-4 text-xl font-semibold">
           To register for MMC, kindly fill out your details below.
         </h2>
