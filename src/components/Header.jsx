@@ -14,7 +14,7 @@ export default function Header() {
           {/* Desktop nav */}
           <nav className="hidden space-x-6 md:block">
             <a
-              href="#home"
+              href="/#home"
               className="text-xl   hover:shadow-md hover:shadow-[#00B425] p-4 rounded-lg"
             >
               Home
