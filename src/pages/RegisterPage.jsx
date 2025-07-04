@@ -91,9 +91,9 @@ export default function RegistrationPage() {
       <main className="max-w-6xl py-2 mx-auto">
         <div className="mb-6">
           <img
-            src="/assets/MMC.png"
+            src="/assets/MMC (2).png"
             alt="Flyer"
-            className="w-full max-h-[400px] object-contain"
+            className="w-full max-h-[400px] object-cover"
           />
         </div>
         {submitted && (
@@ -120,7 +120,7 @@ export default function RegistrationPage() {
                 type="text"
                 name="firstName"
                 id="firstName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
+                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="John"
@@ -145,7 +145,7 @@ export default function RegistrationPage() {
                 type="text"
                 name="lastName"
                 id="lastName"
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
+                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
                   errors.lastName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Doe"
@@ -173,7 +173,7 @@ export default function RegistrationPage() {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
+                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -198,7 +198,7 @@ export default function RegistrationPage() {
                 value={formData.church}
                 onChange={handleChange}
                 required
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
+                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
                   errors.church ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -222,7 +222,7 @@ export default function RegistrationPage() {
                 placeholder="Phone Number"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`text-gray-900 text-2xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm md:text-lg  block w-full p-2.5 border ${
+                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
                   errors.phoneNumber ? "border-red-500" : "border-gray-300"
                 }`}
               />

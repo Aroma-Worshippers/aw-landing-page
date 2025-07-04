@@ -1,6 +1,6 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const registerUser = (formData, onSuccess, onError) => {
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const payload = {
     eventId: "684ba3786a19c918b8309481",
     eventName: "mmc 2025",
