@@ -6,7 +6,7 @@ import "swiper/css/pagination";
 
 export default function Hero() {
   return (
-    <section className="overflow-x-hidden bg-gray-100 min-h-auto ">
+    <section className="overflow-x-hidden bg-gray-100 min-h-auto" id="home">
       <div className="mx-auto">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}

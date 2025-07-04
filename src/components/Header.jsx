@@ -13,12 +13,12 @@ export default function Header() {
           </Link>
           {/* Desktop nav */}
           <nav className="hidden space-x-6 md:block">
-            <NavLink
-              to="/"
-              className="text-xl  hover:shadow-lg hover:shadow-[#00B425] p-4 rounded-lg"
+            <a
+              href="#home"
+              className="text-xl   hover:shadow-md hover:shadow-[#00B425] p-4 rounded-lg"
             >
               Home
-            </NavLink>
+            </a>
             {isLandingPage && (
               <>
                 <a
