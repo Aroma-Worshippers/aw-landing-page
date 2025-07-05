@@ -23,12 +23,13 @@ export default function Hero() {
           <SwiperSlide>
             <div className="relative">
               <video
-                src="/videos/jw.mp4"
+                src="/videos/Jw.mp4"
                 className="w-full"
                 autoPlay
                 loop
                 muted
                 preload="auto"
+                playsInline
               >
                 Your browser does not support the video tag.
               </video>
@@ -45,8 +46,7 @@ export default function Hero() {
                 autoPlay
                 loop
                 muted
-                preload="auto"
-                src="/videos/herovid.mp4"
+                src="/videos/Herovid.mp4"
                 className="w-full"
               ></video>
               <img
