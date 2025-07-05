@@ -36,7 +36,7 @@ export default function Hero() {
               <img
                 src="/assets/Video play.png"
                 alt="Overlay"
-                className="absolute top-0 z-10 w-full h-full opacity-80"
+                className="absolute top-0 z-10 w-full h-full opacity-85"
               />
             </div>
           </SwiperSlide>
@@ -52,7 +52,7 @@ export default function Hero() {
               <img
                 src="/assets/Video play.png"
                 alt="Overlay"
-                className="absolute top-0 z-10 w-full h-full opacity-80"
+                className="absolute top-0 z-10 w-full h-full opacity-85"
               />
             </div>
           </SwiperSlide>
