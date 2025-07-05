@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { registerUser } from "../services/api";
+import axios from "axios";
 
 export default function RegistrationPage() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false); 
   const [errorMessage, setErrorMessage] = useState(false);
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  
+  useEffect(() => {
+    axios.get(`$(BASE_URL)/events`)
+      .then(() => console.log('Backend is awake'))
+      .catch(() => console.log('Could not pingy backend'));
+  }, []);
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
