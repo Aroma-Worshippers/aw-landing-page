@@ -10,7 +10,7 @@ export default function RegistrationPage() {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
-    axios.get(`$(BASE_URL)/events`)
+    axios.get(`$(BASE_URL)/`)
       .then(() => console.log('Backend is awake'))
       .catch(() => console.log('Could not pingy backend'));
   }, []);
