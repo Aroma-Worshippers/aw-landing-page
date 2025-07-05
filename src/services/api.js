@@ -2,7 +2,7 @@ import axios from "axios";
 export const registerUser = (formData, onSuccess, onError) => {
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const payload = {
-    eventId: "684ba3786a19c918b8309481",
+    eventId: "6869a1bae4d091c65d16712a",
     eventName: "mmc 2025",
     firstName: formData.firstName,
     lastName: formData.lastName,
