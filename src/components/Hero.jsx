@@ -28,6 +28,7 @@ export default function Hero() {
                 autoPlay
                 loop
                 muted
+                preload="auto"
               >
                 Your browser does not support the video tag.
               </video>
@@ -44,6 +45,7 @@ export default function Hero() {
                 autoPlay
                 loop
                 muted
+                preload="auto"
                 src="/videos/herovid.mp4"
                 className="w-full"
               ></video>
