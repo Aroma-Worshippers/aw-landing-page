@@ -12,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     firstTimer: formData.firstTimer === "Yes",
   };
   axios
-    .post(`${BASE_URL}/events/register`, payload)
+    .post(`${BASE_URL}/register`, payload)
     .then((res) => {
       console.log("Registration successful:", res);
       if (onSuccess) onSuccess(res);
