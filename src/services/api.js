@@ -26,12 +26,26 @@ export const registerUser = (formData, onSuccess, onError) => {
     });
 };
 
-// ✅ Fetch Attendance
-export const fetchAttendance = (eventId) => {
-  return axios.get(`${BASE_URL}/attendance/${eventId}`);
+// Fetch attendance with server-side pagination and search by name
+export const fetchAttendance = (eventId, page = 1, search = "") => {
+  return axios.get(`${BASE_URL}/attendance/${eventId}`, {
+    params: { page, search },
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  });
 };
 
-// ✅ Mark Attendance
-export const markAttendance = (data) => {
-  return axios.post(`${BASE_URL}/attendance`, data);
+// Mark attendance
+export const markAttendance = (payload) => {
+  return axios.post(`${BASE_URL}/attendance`, payload, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  });
+};
+
+// Admin login (expects token in response)
+export const loginAdmin = (username, password) => {
+  return axios.post(`${BASE_URL}/login`, { username, password });
 };
