@@ -43,7 +43,6 @@ export default function AttendancePage() {
       attendeePhoneNumber: attendee.phoneNumber,
     })
       .then(() => {
-        alert(`Attendance marked for ${attendee.fullName}`);
         // Update local state without refetching
         setAttendanceList((prevList) =>
           prevList.map((item) =>
