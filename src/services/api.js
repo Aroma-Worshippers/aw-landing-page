@@ -1,7 +1,9 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Registration function
+const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://aw-api.onrender.com";
+
+// ✅ Register user
 export const registerUser = (formData, onSuccess, onError) => {
   const payload = {
     eventId: "6869a1bae4d091c65d16712a",
@@ -15,7 +17,7 @@ export const registerUser = (formData, onSuccess, onError) => {
   };
 
   axios
-    .post(`${BASE_URL}/register`, payload)
+    .post(`${BASE_URL}/events/register`, payload)
     .then((res) => {
       console.log("Registration successful:", res);
       if (onSuccess) onSuccess(res);
@@ -26,26 +28,35 @@ export const registerUser = (formData, onSuccess, onError) => {
     });
 };
 
-// Fetch attendance with server-side pagination and search by name
-export const fetchAttendance = (eventId, page = 1, search = "") => {
-  return axios.get(`${BASE_URL}/attendance/${eventId}`, {
-    params: { page, search },
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-    },
-  });
-};
+// ✅ Fetch Attendance (no token)
+export function fetchAttendance(eventId, page, search) {
+  let url = `${BASE_URL}/events/attendance/${eventId}`;
 
-// Mark attendance
+  const params = [];
+  if (page) params.push(`page=${page}`);
+  if (search && search.trim())
+    params.push(`search=${encodeURIComponent(search.trim())}`);
+
+  if (params.length > 0) {
+    url += "?" + params.join("&");
+  }
+
+  return axios.get(url);
+}
+
+
+
+// ✅ Mark Attendance (no token)
 export const markAttendance = (payload) => {
-  return axios.post(`${BASE_URL}/attendance`, payload, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-    },
-  });
+  return axios.post(`${BASE_URL}/events/attendance`, payload);
 };
 
-// Admin login (expects token in response)
+// ✅ Login (no token storage, just message)
 export const loginAdmin = (username, password) => {
-  return axios.post(`${BASE_URL}/login`, { username, password });
+  return axios.post(`${BASE_URL}/auth/login`, { username, password });
+};
+
+// ✅ Create Admin (optional)
+export const createAdmin = (username, password) => {
+  return axios.post(`${BASE_URL}/auth/createAdmin`, { username, password });
 };

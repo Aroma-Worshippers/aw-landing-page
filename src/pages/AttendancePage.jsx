@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 export default function AttendancePage() {
   const eventId = "6869a1bae4d091c65d16712a";
   const eventName = "mmc 2025";
-
   const navigate = useNavigate();
 
   const [attendanceList, setAttendanceList] = useState([]);
@@ -13,20 +12,14 @@ export default function AttendancePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const itemsPerPage = 50;
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
       navigate("/login");
     }
   }, [navigate]);
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("token");
-    navigate("/login");
-  };
 
   const getAttendanceList = useCallback(() => {
     setLoading(true);
@@ -100,12 +93,6 @@ export default function AttendancePage() {
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-3 font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600"
-          >
-            Logout
-          </button>
         </div>
       </div>
 
