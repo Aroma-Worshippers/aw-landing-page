@@ -1,169 +1,115 @@
-import { useEffect, useState, useCallback } from "react";
-import { fetchAttendance, markAttendance } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { fetchAttendance } from "../services/api";
 
 export default function AttendancePage() {
-  const eventId = "6869a1bae4d091c65d16712a";
-  const eventName = "mmc 2025";
-  const navigate = useNavigate();
-
   const [attendanceList, setAttendanceList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 50;
+  const [searchKey, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const eventId = "6869a1bae4d091c65d16712a";
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    if (isLoggedIn !== "true") {
-      navigate("/login");
-    }
-  }, [navigate]);
+    const loadAttendance = () => {
+      setLoading(true);
+      fetchAttendance(eventId, currentPage, searchKey)
+        .then((res) => {
+          setAttendanceList(res.data.attendanceList);
+          setTotalPages(res.data.pages);
+        })
+        .catch((err) => {
+          console.error("Error fetching attendance:", err);
+        })
+        .finally(() => setLoading(false));
+    };
 
-  const getAttendanceList = useCallback(() => {
-    setLoading(true);
-    fetchAttendance(eventId, currentPage, searchTerm)
-      .then((response) => {
-        setAttendanceList(response.data.data.attendanceList);
-        setTotalPages(response.data.data.pages || 1);
-      })
-      .catch((error) => {
-        console.error("Error fetching attendance:", error);
-      })
-      .finally(() => setLoading(false));
-  }, [eventId, currentPage, searchTerm]);
-
-  const handleMarkAttendance = (attendee) => {
-    markAttendance({
-      attendeeId: attendee._id,
-      eventId,
-      eventName,
-      attendeeFullName: attendee.fullName,
-      attendeeEmail: attendee.email,
-      attendeePhoneNumber: attendee.phoneNumber,
-    })
-      .then(() => {
-        alert(`Attendance marked for ${attendee.fullName}`);
-        getAttendanceList();
-      })
-      .catch((error) => {
-        console.error("Error marking attendance:", error);
-        alert("Error marking attendance");
-      });
-  };
+    loadAttendance();
+  }, [currentPage, searchKey]);
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    e.preventDefault();
+    setCurrentPage(1); // reset to first page on new search
+    setSearchQuery(e.target.search.value.trim());
   };
 
-  const toTitleCase = (str) => {
-    if (!str) return "";
-    return str
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const formatPhoneNumber = (phone) => {
-    if (!phone) return "";
-    if (phone.startsWith("+234")) {
-      return "0" + phone.slice(4);
-    }
-    return phone;
-  };
-
-  useEffect(() => {
-    getAttendanceList();
-  }, [getAttendanceList]);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <div className="flex flex-col items-center justify-between gap-4 mb-6 md:flex-row">
-        <h1 className="text-3xl font-bold">Attendance Dashboard</h1>
-        <div className="flex gap-4">
-          <div className="w-full md:w-80">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleSearch}
-              placeholder="Search by full name..."
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-        </div>
+    <div className="max-w-5xl p-6 mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Registered Participants</h1>
+ 
       </div>
 
+      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+        <input
+          name="search"
+          type="text"
+          placeholder="Search name, email or phone..."
+          className="w-full px-3 py-2 border rounded"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 text-white bg-blue-600 rounded"
+        >
+          Search
+        </button>
+      </form>
+
       {loading ? (
-        <div className="flex items-center justify-center py-10">
-          <div className="w-16 h-16 transition-colors duration-700 border-4 border-white rounded-full border-t-green-600 animate-spin"></div>
-        </div>
+        <p>Loading...</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full overflow-hidden bg-white border border-gray-300 rounded-lg">
+        <>
+          <table className="w-full border border-gray-200">
             <thead>
-              <tr className="text-white bg-green-600 border-b border-gray-300">
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  S/N
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Full Name
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Phone Number
-                </th>
-                <th className="px-4 py-3 text-center">Mark Attendance</th>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">#</th>
+                <th className="p-2 border">Full Name</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Phone</th>
+                <th className="p-2 border">Attendance Count</th>
               </tr>
             </thead>
             <tbody>
               {attendanceList.map((attendee, index) => (
-                <tr key={attendee._id} className="border-b border-gray-300">
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {(currentPage - 1) * itemsPerPage + index + 1}
+                <tr key={attendee._id} className="text-sm">
+                  <td className="p-2 border">
+                    {(currentPage - 1) * 50 + index + 1}
                   </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {toTitleCase(attendee.fullName)}
-                  </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {attendee.email}
-                  </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {formatPhoneNumber(attendee.phoneNumber)}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      onChange={() => handleMarkAttendance(attendee)}
-                    />
+                  <td className="p-2 border">{attendee.fullName}</td>
+                  <td className="p-2 border">{attendee.email}</td>
+                  <td className="p-2 border">{attendee.phoneNumber}</td>
+                  <td className="p-2 border">
+                    {attendee.attendanceRecords.length}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === page
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-300 text-gray-700 hover:bg-green-500 hover:text-white"
-                  }`}
-                >
-                  {page}
-                </button>
-              )
-            )}
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              Prev
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
+              }
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              Next
+            </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
