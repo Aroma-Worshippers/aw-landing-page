@@ -67,7 +67,7 @@ export default function AttendancePage() {
         alert("Failed to mark attendance");
       });
   };
-  
+
   return (
     <div className="max-w-5xl p-6 mx-auto">
       <div className="flex items-center justify-between mb-4">
