@@ -15,8 +15,9 @@ export default function AttendancePage() {
       setLoading(true);
       fetchAttendance(eventId, currentPage, searchKey)
         .then((res) => {
+          console.log(res.data.data);
           setAttendanceList(res.data.data.attendanceList);
-          setTotalPages(res.data.pages);
+          setTotalPages(res.data.data.pages);
         })
         .catch((err) => {
           console.error("Error fetching attendance:", err);
