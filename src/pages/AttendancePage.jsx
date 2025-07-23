@@ -149,7 +149,6 @@ export default function AttendancePage() {
                         type="checkbox"
                         onChange={() => handleAttendanceMark(attendee)}
                         checked={attendee.attendanceRecords.length > 0}
-                        disabled={attendee.attendanceRecords.length > 0}
                       />
                     </td>
                   </tr>
