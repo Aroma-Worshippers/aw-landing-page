@@ -24,8 +24,20 @@ export default function AttendancePage() {
         .finally(() => setLoading(false));
     };
 
-    loadAttendance();
-  }, [currentPage, searchKey]);
+
+  const getAttendanceList = useCallback(() => {
+    setLoading(true);
+    fetchAttendance(eventId, currentPage, searchKey)
+      .then((response) => {
+        setAttendanceList(response.data.data.attendanceList);
+        setTotalPages(response.data.data.pages || 1);
+      })
+      .catch((error) => {
+        console.error("Error fetching attendance:", error);
+      })
+      .finally(() => setLoading(false));
+  }, [eventId, currentPage, searchKey]);
+
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -45,18 +57,13 @@ export default function AttendancePage() {
 
     markAttendance(payload)
       .then(() => {
-        alert("Attendance marked!");
-
-        // Optional: update UI without reloading
-        setAttendanceList((prev) =>
-          prev.map((item) =>
+        // Update local state without refetching
+        setAttendanceList((prevList) =>
+          prevList.map((item) =>
             item._id === attendee._id
               ? {
                   ...item,
-                  attendanceRecords: [
-                    ...item.attendanceRecords,
-                    { createdAt: new Date().toISOString() },
-                  ],
+                  attendanceRecords: [{ createdAt: new Date().toISOString() }],
                 }
               : item
           )
@@ -68,6 +75,28 @@ export default function AttendancePage() {
       });
   };
 
+  const toTitleCase = (str) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return "";
+    if (phone.startsWith("+234")) {
+      return "0" + phone.slice(4);
+    }
+    return phone;
+  };
+
+  useEffect(() => {
+    getAttendanceList();
+  }, [getAttendanceList]);
+
+ 
   return (
     <div className="max-w-5xl p-6 mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -105,28 +134,37 @@ export default function AttendancePage() {
             </thead>
             <tbody>
               {attendanceList && attendanceList.length > 0 ? (
-                attendanceList.map((attendee, index) => (
-                  <tr key={attendee._id} className="border-t">
-                    <td className="px-4 py-2">
-                      {(currentPage - 1) * 50 + index + 1}
-                    </td>
-                    <td className="px-4 py-2">{attendee.fullName}</td>
-                    <td className="px-4 py-2">{attendee.email}</td>
-                    <td className="px-4 py-2">{attendee.phoneNumber}</td>
-                    <td className="px-4 py-2">
-                      <input
+                attendanceList.map((attendee, index) => {
+                  const alreadyMarked = attendee.attendanceRecords?.length > 0;
+                  return (
+                    <tr key={attendee._id} className="border-b border-gray-300">
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {toTitleCase(attendee.fullName)}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {attendee.email}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {formatPhoneNumber(attendee.phoneNumber)}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <input
                         type="checkbox"
                         onChange={() => handleAttendanceMark(attendee)}
                         checked={attendee.attendanceRecords.length > 0}
                         disabled={attendee.attendanceRecords.length > 0}
                       />
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="5" className="py-4 text-center text-gray-500">
-                    No attendance records found.
+                  <td colSpan="5" className="p-4 text-center text-gray-500">
+                    No attendees found.
                   </td>
                 </tr>
               )}
