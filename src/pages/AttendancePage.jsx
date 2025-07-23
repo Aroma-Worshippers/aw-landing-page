@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchAttendance } from "../services/api";
+import { fetchAttendance, markAttendance } from "../services/api";
 
 export default function AttendancePage() {
   const [attendanceList, setAttendanceList] = useState([]);
@@ -33,12 +33,45 @@ export default function AttendancePage() {
     setSearchQuery(e.target.search.value.trim());
   };
 
+  const handleAttendanceMark = (attendee) => {
+    const payload = {
+      attendeeId: attendee._id,
+      eventId: "6869a1bae4d091c65d16712a",
+      eventName: "mmc 2025",
+      attendeeFullName: attendee.fullName,
+      attendeeEmail: attendee.email,
+      attendeePhoneNumber: attendee.phoneNumber,
+    };
 
+    markAttendance(payload)
+      .then(() => {
+        alert("Attendance marked!");
+
+        // Optional: update UI without reloading
+        setAttendanceList((prev) =>
+          prev.map((item) =>
+            item._id === attendee._id
+              ? {
+                  ...item,
+                  attendanceRecords: [
+                    ...item.attendanceRecords,
+                    { createdAt: new Date().toISOString() },
+                  ],
+                }
+              : item
+          )
+        );
+      })
+      .catch((err) => {
+        console.error("Failed to mark attendance", err);
+        alert("Failed to mark attendance");
+      });
+  };
+  
   return (
     <div className="max-w-5xl p-6 mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Registered Participants</h1>
- 
       </div>
 
       <form onSubmit={handleSearch} className="flex gap-2 mb-4">
@@ -80,7 +113,12 @@ export default function AttendancePage() {
                   <td className="p-2 border">{attendee.email}</td>
                   <td className="p-2 border">{attendee.phoneNumber}</td>
                   <td className="p-2 border">
-                    {attendee.attendanceRecords.length}
+                    <input
+                      type="checkbox"
+                      onChange={() => handleAttendanceMark(attendee)}
+                      checked={attendee.attendanceRecords.length > 0}
+                      disabled={attendee.attendanceRecords.length > 0}
+                    />
                   </td>
                 </tr>
               ))}
