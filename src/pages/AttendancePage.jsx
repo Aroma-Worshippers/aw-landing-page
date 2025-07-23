@@ -9,7 +9,6 @@ export default function AttendancePage() {
 
   const [attendanceList, setAttendanceList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 50;
@@ -23,7 +22,7 @@ export default function AttendancePage() {
 
   const getAttendanceList = useCallback(() => {
     setLoading(true);
-    fetchAttendance(eventId, currentPage, searchTerm)
+    fetchAttendance(eventId, currentPage)
       .then((response) => {
         setAttendanceList(response.data.data.attendanceList);
         setTotalPages(response.data.data.pages || 1);
@@ -32,7 +31,7 @@ export default function AttendancePage() {
         console.error("Error fetching attendance:", error);
       })
       .finally(() => setLoading(false));
-  }, [eventId, currentPage, searchTerm]);
+  }, [eventId, currentPage]);
 
   const handleMarkAttendance = (attendee) => {
     markAttendance({
@@ -45,17 +44,22 @@ export default function AttendancePage() {
     })
       .then(() => {
         alert(`Attendance marked for ${attendee.fullName}`);
-        getAttendanceList();
+        // Update local state without refetching
+        setAttendanceList((prevList) =>
+          prevList.map((item) =>
+            item._id === attendee._id
+              ? {
+                  ...item,
+                  attendanceRecords: [{ createdAt: new Date().toISOString() }],
+                }
+              : item
+          )
+        );
       })
       .catch((error) => {
         console.error("Error marking attendance:", error);
         alert("Error marking attendance");
       });
-  };
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
   };
 
   const toTitleCase = (str) => {
@@ -83,17 +87,6 @@ export default function AttendancePage() {
     <div className="min-h-screen p-6 bg-gray-100">
       <div className="flex flex-col items-center justify-between gap-4 mb-6 md:flex-row">
         <h1 className="text-3xl font-bold">Attendance Dashboard</h1>
-        <div className="flex gap-4">
-          <div className="w-full md:w-80">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleSearch}
-              placeholder="Search by full name..."
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-        </div>
       </div>
 
       {loading ? (
@@ -121,28 +114,41 @@ export default function AttendancePage() {
               </tr>
             </thead>
             <tbody>
-              {attendanceList.map((attendee, index) => (
-                <tr key={attendee._id} className="border-b border-gray-300">
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {(currentPage - 1) * itemsPerPage + index + 1}
-                  </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {toTitleCase(attendee.fullName)}
-                  </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {attendee.email}
-                  </td>
-                  <td className="px-4 py-3 border-r border-gray-300">
-                    {formatPhoneNumber(attendee.phoneNumber)}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      onChange={() => handleMarkAttendance(attendee)}
-                    />
+              {attendanceList && attendanceList.length > 0 ? (
+                attendanceList.map((attendee, index) => {
+                  const alreadyMarked = attendee.attendanceRecords?.length > 0;
+                  return (
+                    <tr key={attendee._id} className="border-b border-gray-300">
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {toTitleCase(attendee.fullName)}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {attendee.email}
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-300">
+                        {formatPhoneNumber(attendee.phoneNumber)}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={alreadyMarked}
+                          disabled={alreadyMarked}
+                          onChange={() => handleMarkAttendance(attendee)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5" className="p-4 text-center text-gray-500">
+                    No attendees found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
