@@ -10,6 +10,21 @@ export default function AttendancePage() {
 
   const eventId = "6869a1bae4d091c65d16712a";
 
+  // Highlight search matches
+  function highlightMatch(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.split(regex).map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={i} className="text-black bg-yellow-300">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  }
+
   useEffect(() => {
     const loadAttendance = () => {
       setLoading(true);
@@ -27,19 +42,18 @@ export default function AttendancePage() {
     loadAttendance();
   }, [currentPage, searchKey]);
 
-  const handleSearchInput = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    if (value.trim() === "") {
-      setCurrentPage(1); // Reset pagination and fetch full list
+  const handleSearchKeyChange = (e) => {
+    const newValue = e.target.value;
+    setSearchQuery(newValue);
+    if (newValue.trim() === "") {
+      setCurrentPage(1);
     }
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      setCurrentPage(1); // Always start from page 1 on new search
-      setSearchQuery(e.target.value.trim());
+      setCurrentPage(1);
     }
   };
 
@@ -85,14 +99,16 @@ export default function AttendancePage() {
     <div className="max-w-5xl p-2 mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Registered Participants</h1>
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          value={searchKey}
-          onChange={handleSearchInput}
-          onKeyDown={handleSearchSubmit}
-          className="w-full max-w-sm px-3 py-2 border rounded"
-        />
+        <div className="flex w-full max-w-md gap-2 mb-4">
+          <input
+            type="text"
+            placeholder="Search by name, email or phone"
+            value={searchKey}
+            onChange={handleSearchKeyChange}
+            onKeyDown={handleKeyDown}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -117,10 +133,17 @@ export default function AttendancePage() {
                       {(currentPage - 1) * 50 + index + 1}
                     </td>
                     <td className="p-2 border">
-                      {toTitleCase(attendee.fullName || "")}
+                      {highlightMatch(
+                        toTitleCase(attendee.fullName || ""),
+                        searchKey
+                      )}
                     </td>
-                    <td className="p-2 border">{attendee.email}</td>
-                    <td className="p-2 border">{attendee.phoneNumber}</td>
+                    <td className="p-2 border">
+                      {highlightMatch(attendee.email, searchKey)}
+                    </td>
+                    <td className="p-2 border">
+                      {highlightMatch(attendee.phoneNumber, searchKey)}
+                    </td>
                     <td className="p-2 text-center border">
                       <input
                         type="checkbox"
@@ -134,7 +157,6 @@ export default function AttendancePage() {
             </tbody>
           </table>
 
-          {/* Pagination Controls */}
           <div className="flex items-center justify-center gap-4 mt-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
