@@ -104,34 +104,25 @@ export default function AttendancePage() {
               </tr>
             </thead>
             <tbody>
-              {attendanceList && attendanceList.length > 0 ? (
-                attendanceList.map((attendee, index) => (
-                  <tr key={attendee._id} className="border-t">
-                    <td className="px-4 py-2">
-                      {(currentPage - 1) * 50 + index + 1}
-                    </td>
-                    <td className="px-4 py-2">{attendee.fullName}</td>
-                    <td className="px-4 py-2">{attendee.email}</td>
-                    <td className="px-4 py-2">{attendee.phoneNumber}</td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="checkbox"
-                        onChange={() => handleAttendanceMark(attendee)}
-                        checked={attendee.attendanceRecords.length > 0}
-                        disabled={attendee.attendanceRecords.length > 0}
-                      />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-4 text-center text-gray-500">
-                    No attendance records found.
+              {attendanceList.map((attendee, index) => (
+                <tr key={attendee._id} className="text-sm">
+                  <td className="p-2 border">
+                    {(currentPage - 1) * 50 + index + 1}
+                  </td>
+                  <td className="p-2 border">{attendee.fullName}</td>
+                  <td className="p-2 border">{attendee.email}</td>
+                  <td className="p-2 border">{attendee.phoneNumber}</td>
+                  <td className="p-2 border">
+                    <input
+                      type="checkbox"
+                      onChange={() => handleAttendanceMark(attendee)}
+                      checked={attendee.attendanceRecords.length > 0}
+                      disabled={attendee.attendanceRecords.length > 0}
+                    />
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
-            ;
           </table>
 
           {/* Pagination Controls */}
