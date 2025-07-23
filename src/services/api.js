@@ -36,12 +36,12 @@ export const registerUser = (formData, onSuccess, onError) => {
 };
 
 // ✅ Fetch Attendance
-export function fetchAttendance(eventId, page, search) {
+export function fetchAttendance(eventId, page, searchKey) {
   let url = `/events/attendance/${eventId}`;
   const params = [];
   if (page) params.push(`page=${page}`);
-  if (search && search.trim())
-    params.push(`search=${encodeURIComponent(search.trim())}`);
+  if (searchKey.trim())
+    params.push(`searchKey=${encodeURIComponent(searchKey.trim())}`);
 
   if (params.length > 0) {
     url += "?" + params.join("&");

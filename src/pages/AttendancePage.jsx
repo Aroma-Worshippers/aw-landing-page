@@ -1,28 +1,33 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { fetchAttendance, markAttendance } from "../services/api";
-import { useNavigate } from "react-router-dom";
 
 export default function AttendancePage() {
-  const eventId = "6869a1bae4d091c65d16712a";
-  const eventName = "mmc 2025";
-  const navigate = useNavigate();
-
   const [attendanceList, setAttendanceList] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 50;
+  const [searchKey, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const eventId = "6869a1bae4d091c65d16712a";
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    if (isLoggedIn !== "true") {
-      navigate("/login");
-    }
-  }, [navigate]);
+    const loadAttendance = () => {
+      setLoading(true);
+      fetchAttendance(eventId, currentPage, searchKey)
+        .then((res) => {
+          setAttendanceList(res.data.attendanceList);
+          setTotalPages(res.data.pages);
+        })
+        .catch((err) => {
+          console.error("Error fetching attendance:", err);
+        })
+        .finally(() => setLoading(false));
+    };
+
 
   const getAttendanceList = useCallback(() => {
     setLoading(true);
-    fetchAttendance(eventId, currentPage)
+    fetchAttendance(eventId, currentPage, searchKey)
       .then((response) => {
         setAttendanceList(response.data.data.attendanceList);
         setTotalPages(response.data.data.pages || 1);
@@ -31,17 +36,26 @@ export default function AttendancePage() {
         console.error("Error fetching attendance:", error);
       })
       .finally(() => setLoading(false));
-  }, [eventId, currentPage]);
+  }, [eventId, currentPage, searchKey]);
 
-  const handleMarkAttendance = (attendee) => {
-    markAttendance({
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setCurrentPage(1); // reset to first page on new search
+    setSearchQuery(e.target.search.value.trim());
+  };
+
+  const handleAttendanceMark = (attendee) => {
+    const payload = {
       attendeeId: attendee._id,
-      eventId,
-      eventName,
+      eventId: "6869a1bae4d091c65d16712a",
+      eventName: "mmc 2025",
       attendeeFullName: attendee.fullName,
       attendeeEmail: attendee.email,
       attendeePhoneNumber: attendee.phoneNumber,
-    })
+    };
+
+    markAttendance(payload)
       .then(() => {
         // Update local state without refetching
         setAttendanceList((prevList) =>
@@ -55,9 +69,9 @@ export default function AttendancePage() {
           )
         );
       })
-      .catch((error) => {
-        console.error("Error marking attendance:", error);
-        alert("Error marking attendance");
+      .catch((err) => {
+        console.error("Failed to mark attendance", err);
+        alert("Failed to mark attendance");
       });
   };
 
@@ -82,34 +96,40 @@ export default function AttendancePage() {
     getAttendanceList();
   }, [getAttendanceList]);
 
+   
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <div className="flex flex-col items-center justify-between gap-4 mb-6 md:flex-row">
-        <h1 className="text-3xl font-bold">Attendance Dashboard</h1>
+    <div className="max-w-5xl p-6 mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Registered Participants</h1>
       </div>
 
+      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+        <input
+          name="search"
+          type="text"
+          placeholder="Search name, email or phone..."
+          className="w-full px-3 py-2 border rounded"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 text-white bg-blue-600 rounded"
+        >
+          Search
+        </button>
+      </form>
+
       {loading ? (
-        <div className="flex items-center justify-center py-10">
-          <div className="w-16 h-16 transition-colors duration-700 border-4 border-white rounded-full border-t-green-600 animate-spin"></div>
-        </div>
+        <p>Loading...</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full overflow-hidden bg-white border border-gray-300 rounded-lg">
+        <>
+          <table className="w-full border border-gray-200">
             <thead>
-              <tr className="text-white bg-green-600 border-b border-gray-300">
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  S/N
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Full Name
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-left border-r border-gray-300">
-                  Phone Number
-                </th>
-                <th className="px-4 py-3 text-center">Mark Attendance</th>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">#</th>
+                <th className="p-2 border">Full Name</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Phone</th>
+                <th className="p-2 border">Attendance Count</th>
               </tr>
             </thead>
             <tbody>
@@ -132,11 +152,11 @@ export default function AttendancePage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <input
-                          type="checkbox"
-                          checked={alreadyMarked}
-                          disabled={alreadyMarked}
-                          onChange={() => handleMarkAttendance(attendee)}
-                        />
+                        type="checkbox"
+                        onChange={() => handleAttendanceMark(attendee)}
+                        checked={attendee.attendanceRecords.length > 0}
+                        disabled={attendee.attendanceRecords.length > 0}
+                      />
                       </td>
                     </tr>
                   );
@@ -149,26 +169,32 @@ export default function AttendancePage() {
                 </tr>
               )}
             </tbody>
+            ;
           </table>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === page
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-300 text-gray-700 hover:bg-green-500 hover:text-white"
-                  }`}
-                >
-                  {page}
-                </button>
-              )
-            )}
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              Prev
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
+              }
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              Next
+            </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
