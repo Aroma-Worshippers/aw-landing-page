@@ -15,7 +15,8 @@ export default function AttendancePage() {
       setLoading(true);
       fetchAttendance(eventId, currentPage, searchKey)
         .then((res) => {
-          setAttendanceList(res.data.attendanceList);
+          console.log(res.data);
+          setAttendanceList(res.data.data.attendanceList);
           setTotalPages(res.data.pages);
         })
         .catch((err) => {
@@ -69,22 +70,21 @@ export default function AttendancePage() {
     <div className="max-w-5xl p-6 mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Registered Participants</h1>
+        <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+          <input
+            name="search"
+            type="text"
+            placeholder="Search name, email or phone..."
+            className="w-full px-3 py-2 border rounded"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-blue-600 rounded"
+          >
+            Search
+          </button>
+        </form>
       </div>
-
-      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
-        <input
-          name="search"
-          type="text"
-          placeholder="Search name, email or phone..."
-          className="w-full px-3 py-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 text-white bg-blue-600 rounded"
-        >
-          Search
-        </button>
-      </form>
 
       {loading ? (
         <p>Loading...</p>
@@ -100,27 +100,26 @@ export default function AttendancePage() {
                 <th className="p-2 border">Attendance Count</th>
               </tr>
             </thead>
-              <tbody>
-                {Array.isArray(attendanceList) &&
+            <tbody>
+              {Array.isArray(attendanceList) &&
                 attendanceList.map((attendee, index) => (
-                    <tr key={attendee._id} className="text-sm">
-                      <td className="p-2 border">
-                        {(currentPage - 1) * 50 + index + 1}
-                      </td>
-                      <td className="p-2 border">{attendee.fullName}</td>
-                      <td className="p-2 border">{attendee.email}</td>
-                      <td className="p-2 border">{attendee.phoneNumber}</td>
-                      <td className="p-2 border">
-                        <input
-                          type="checkbox"
-                          onChange={() => handleAttendanceMark(attendee)}
-                          checked={attendee.attendanceRecords.length > 0}
-                          disabled={attendee.attendanceRecords.length > 0}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                }
+                  <tr key={attendee._id} className="text-sm">
+                    <td className="p-2 border">
+                      {(currentPage - 1) * 50 + index + 1}
+                    </td>
+                    <td className="p-2 border">{attendee.fullName}</td>
+                    <td className="p-2 border">{attendee.email}</td>
+                    <td className="p-2 border">{attendee.phoneNumber}</td>
+                    <td className="p-2 border">
+                      <input
+                        type="checkbox"
+                        onChange={() => handleAttendanceMark(attendee)}
+                        checked={attendee.attendanceRecords.length > 0}
+                        disabled={attendee.attendanceRecords.length > 0}
+                      />
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
 
