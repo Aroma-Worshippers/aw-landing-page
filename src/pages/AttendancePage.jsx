@@ -45,9 +45,6 @@ export default function AttendancePage() {
 
     markAttendance(payload)
       .then(() => {
-        alert("Attendance marked!");
-
-        // Optional: update UI without reloading
         setAttendanceList((prev) =>
           prev.map((item) =>
             item._id === attendee._id
@@ -103,25 +100,27 @@ export default function AttendancePage() {
                 <th className="p-2 border">Attendance Count</th>
               </tr>
             </thead>
-            <tbody>
-              {attendanceList.map((attendee, index) => (
-                <tr key={attendee._id} className="text-sm">
-                  <td className="p-2 border">
-                    {(currentPage - 1) * 50 + index + 1}
-                  </td>
-                  <td className="p-2 border">{attendee.fullName}</td>
-                  <td className="p-2 border">{attendee.email}</td>
-                  <td className="p-2 border">{attendee.phoneNumber}</td>
-                  <td className="p-2 border">
-                    <input
-                      type="checkbox"
-                      onChange={() => handleAttendanceMark(attendee)}
-                      checked={attendee.attendanceRecords.length > 0}
-                      disabled={attendee.attendanceRecords.length > 0}
-                    />
-                  </td>
-                </tr>
-              ))}
+              <tbody>
+                {Array.isArray(attendanceList) &&
+                attendanceList.map((attendee, index) => (
+                    <tr key={attendee._id} className="text-sm">
+                      <td className="p-2 border">
+                        {(currentPage - 1) * 50 + index + 1}
+                      </td>
+                      <td className="p-2 border">{attendee.fullName}</td>
+                      <td className="p-2 border">{attendee.email}</td>
+                      <td className="p-2 border">{attendee.phoneNumber}</td>
+                      <td className="p-2 border">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleAttendanceMark(attendee)}
+                          checked={attendee.attendanceRecords.length > 0}
+                          disabled={attendee.attendanceRecords.length > 0}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                }
             </tbody>
           </table>
 
