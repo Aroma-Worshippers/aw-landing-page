@@ -15,7 +15,7 @@ export default function AttendancePage() {
       setLoading(true);
       fetchAttendance(eventId, currentPage, searchKey)
         .then((res) => {
-          setAttendanceList(res.data.data.attendanceList);
+          setAttendanceList(res.data.attendanceList);
           setTotalPages(res.data.pages);
         })
         .catch((err) => {
@@ -99,18 +99,18 @@ export default function AttendancePage() {
           <table className="w-full border border-gray-300">
             <thead>
               <tr className="text-sm text-left text-white bg-green-600">
-                <th className="p-2 border">#</th>
-                <th className="p-2 border">Full Name</th>
-                <th className="p-2 border">Email</th>
-                <th className="p-2 border">Phone</th>
-                <th className="p-2 border">Attendance</th>
+                <th className="p-4 border">#</th>
+                <th className="p-4 border">Full Name</th>
+                <th className="p-4 border">Email</th>
+                <th className="p-4 border">Phone</th>
+                <th className="p-4 border">Attendance</th>
               </tr>
             </thead>
             <tbody>
               {Array.isArray(attendanceList) &&
                 attendanceList.map((attendee, index) => (
                   <tr key={attendee._id} className="text-sm bg-white">
-                    <td className="p-2 border">
+                    <td className="p-4 border">
                       {(currentPage - 1) * 50 + index + 1}
                     </td>
                     <td className="p-2 border">
@@ -136,7 +136,7 @@ export default function AttendancePage() {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+              className="px-3 py-1 text-sm bg-green-400 rounded hover:bg-green-300 disabled:opacity-50"
             >
               Prev
             </button>
@@ -148,7 +148,7 @@ export default function AttendancePage() {
                 setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
               }
               disabled={currentPage === totalPages}
-              className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+              className="px-3 py-1 text-sm bg-green-300 rounded hover:bg-green-400 disabled:opacity-50"
             >
               Next
             </button>
