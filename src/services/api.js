@@ -3,6 +3,13 @@ import axios from "axios";
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://aw-api.onrender.com";
 
+const api = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true, // ✅ send cookies with every request
+});
+
+export default api;
+
 // ✅ Register user
 export const registerUser = (formData, onSuccess, onError) => {
   const payload = {
@@ -16,8 +23,8 @@ export const registerUser = (formData, onSuccess, onError) => {
     firstTimer: formData.firstTimer === "Yes",
   };
 
-  axios
-    .post(`${BASE_URL}/events/register`, payload)
+  api
+    .post("/events/register", payload)
     .then((res) => {
       console.log("Registration successful:", res);
       if (onSuccess) onSuccess(res);
@@ -28,10 +35,9 @@ export const registerUser = (formData, onSuccess, onError) => {
     });
 };
 
-// ✅ Fetch Attendance (no token)
+// ✅ Fetch Attendance
 export function fetchAttendance(eventId, page, search) {
-  let url = `${BASE_URL}/events/attendance/${eventId}`;
-
+  let url = `/events/attendance/${eventId}`;
   const params = [];
   if (page) params.push(`page=${page}`);
   if (search && search.trim())
@@ -41,22 +47,20 @@ export function fetchAttendance(eventId, page, search) {
     url += "?" + params.join("&");
   }
 
-  return axios.get(url);
+  return api.get(url); // ✅ uses api instance (sends cookie)
 }
 
-
-
-// ✅ Mark Attendance (no token)
+// ✅ Mark Attendance
 export const markAttendance = (payload) => {
-  return axios.post(`${BASE_URL}/events/attendance`, payload);
+  return api.post("/events/attendance", payload);
 };
 
-// ✅ Login (no token storage, just message)
+// ✅ Login
 export const loginAdmin = (username, password) => {
-  return axios.post(`${BASE_URL}/auth/login`, { username, password });
+  return api.post("/auth/login", { username, password });
 };
 
-// ✅ Create Admin (optional)
+// ✅ Create Admin
 export const createAdmin = (username, password) => {
-  return axios.post(`${BASE_URL}/auth/createAdmin`, { username, password });
+  return api.post("/auth/createAdmin", { username, password });
 };
