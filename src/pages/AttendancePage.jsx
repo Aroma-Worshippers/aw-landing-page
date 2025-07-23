@@ -15,7 +15,6 @@ export default function AttendancePage() {
       setLoading(true);
       fetchAttendance(eventId, currentPage, searchKey)
         .then((res) => {
-          console.log(res.data.data);
           setAttendanceList(res.data.data.attendanceList);
           setTotalPages(res.data.data.pages);
         })
@@ -28,10 +27,20 @@ export default function AttendancePage() {
     loadAttendance();
   }, [currentPage, searchKey]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    setSearchQuery(e.target.search.value.trim());
+  const handleSearchInput = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    if (value.trim() === "") {
+      setCurrentPage(1); // Reset pagination and fetch full list
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setCurrentPage(1); // Always start from page 1 on new search
+      setSearchQuery(e.target.value.trim());
+    }
   };
 
   const handleAttendanceMark = (attendee) => {
@@ -66,7 +75,6 @@ export default function AttendancePage() {
       });
   };
 
-  // Convert to Title Case
   const toTitleCase = (str) =>
     str
       .split(" ")
@@ -74,23 +82,17 @@ export default function AttendancePage() {
       .join(" ");
 
   return (
-    <div className="max-w-5xl p-6 mx-auto">
+    <div className="max-w-5xl p-2 mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Registered Participants</h1>
-        <form onSubmit={handleSearch} className="flex gap-2 mb-4">
-          <input
-            name="search"
-            type="text"
-            placeholder="Search name, email or phone..."
-            className="w-full px-3 py-2 border rounded"
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
-          >
-            Search
-          </button>
-        </form>
+        <input
+          type="text"
+          placeholder="Search by name or email"
+          value={searchKey}
+          onChange={handleSearchInput}
+          onKeyDown={handleSearchSubmit}
+          className="w-full max-w-sm px-3 py-2 border rounded"
+        />
       </div>
 
       {loading ? (
