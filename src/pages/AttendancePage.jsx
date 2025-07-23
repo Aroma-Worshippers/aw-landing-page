@@ -15,7 +15,6 @@ export default function AttendancePage() {
       setLoading(true);
       fetchAttendance(eventId, currentPage, searchKey)
         .then((res) => {
-          console.log(res.data);
           setAttendanceList(res.data.data.attendanceList);
           setTotalPages(res.data.pages);
         })
@@ -30,14 +29,14 @@ export default function AttendancePage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(1); // reset to first page on new search
+    setCurrentPage(1);
     setSearchQuery(e.target.search.value.trim());
   };
 
   const handleAttendanceMark = (attendee) => {
     const payload = {
       attendeeId: attendee._id,
-      eventId: "6869a1bae4d091c65d16712a",
+      eventId,
       eventName: "mmc 2025",
       attendeeFullName: attendee.fullName,
       attendeeEmail: attendee.email,
@@ -66,6 +65,13 @@ export default function AttendancePage() {
       });
   };
 
+  // Convert to Title Case
+  const toTitleCase = (str) =>
+    str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+
   return (
     <div className="max-w-5xl p-6 mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -79,7 +85,7 @@ export default function AttendancePage() {
           />
           <button
             type="submit"
-            className="px-4 py-2 text-white bg-blue-600 rounded"
+            className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
           >
             Search
           </button>
@@ -90,27 +96,29 @@ export default function AttendancePage() {
         <p>Loading...</p>
       ) : (
         <>
-          <table className="w-full border border-gray-200">
+          <table className="w-full border border-gray-300">
             <thead>
-              <tr className="bg-gray-100">
+              <tr className="text-sm text-left text-white bg-green-600">
                 <th className="p-2 border">#</th>
                 <th className="p-2 border">Full Name</th>
                 <th className="p-2 border">Email</th>
                 <th className="p-2 border">Phone</th>
-                <th className="p-2 border">Attendance Count</th>
+                <th className="p-2 border">Attendance</th>
               </tr>
             </thead>
             <tbody>
               {Array.isArray(attendanceList) &&
                 attendanceList.map((attendee, index) => (
-                  <tr key={attendee._id} className="text-sm">
+                  <tr key={attendee._id} className="text-sm bg-white">
                     <td className="p-2 border">
                       {(currentPage - 1) * 50 + index + 1}
                     </td>
-                    <td className="p-2 border">{attendee.fullName}</td>
+                    <td className="p-2 border">
+                      {toTitleCase(attendee.fullName || "")}
+                    </td>
                     <td className="p-2 border">{attendee.email}</td>
                     <td className="p-2 border">{attendee.phoneNumber}</td>
-                    <td className="p-2 border">
+                    <td className="p-2 text-center border">
                       <input
                         type="checkbox"
                         onChange={() => handleAttendanceMark(attendee)}
@@ -124,15 +132,15 @@ export default function AttendancePage() {
           </table>
 
           {/* Pagination Controls */}
-          <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="flex items-center justify-center gap-4 mt-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 bg-gray-200 rounded"
+              className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
             >
               Prev
             </button>
-            <span>
+            <span className="text-sm font-medium">
               Page {currentPage} of {totalPages}
             </span>
             <button
@@ -140,7 +148,7 @@ export default function AttendancePage() {
                 setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
               }
               disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-gray-200 rounded"
+              className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
             >
               Next
             </button>
