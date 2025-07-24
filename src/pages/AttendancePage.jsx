@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { fetchAttendance, markAttendance } from "../api";
+import { fetchAttendance, markAttendance } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AttendancePage() {
