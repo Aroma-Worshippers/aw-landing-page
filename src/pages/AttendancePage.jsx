@@ -39,7 +39,7 @@ export default function AttendancePage() {
     debounceTimeout = setTimeout(() => {
       setCurrentPage(1);
       loadAttendance();
-    }, 300);
+    }, 600);
   };
 
   const handleAttendanceMark = (attendee) => {
