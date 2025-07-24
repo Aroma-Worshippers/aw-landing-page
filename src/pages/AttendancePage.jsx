@@ -1,48 +1,43 @@
-import { useEffect, useState, useCallback } from "react";
-import { fetchAttendance, markAttendance } from "../services/api";
-
-let debounceTimeout;
+import { useEffect, useState, useRef, useCallback } from "react";
+import { fetchAttendance, markAttendance } from "../api";
+import { useNavigate } from "react-router-dom";
 
 export default function AttendancePage() {
   const [attendanceList, setAttendanceList] = useState([]);
+  const [eventId] = useState("6869a1bae4d091c65d16712a");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pages, setPages] = useState(1);
   const [searchKey, setSearchKey] = useState("");
-  const [loading, setLoading] = useState(false);
   const [noMatch, setNoMatch] = useState(false);
+  const debounceTimeout = useRef(null);
 
-  const eventId = "6869a1bae4d091c65d16712a";
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const loadAttendance = useCallback(() => {
-    setLoading(true);
     fetchAttendance(eventId, currentPage, searchKey)
       .then((res) => {
-        const list = res.data.data.attendanceList;
-        setAttendanceList(list);
-        setTotalPages(res.data.data.pages);
-        setNoMatch(list.length === 0);
+        const data = res.data.attendanceList || [];
+        setAttendanceList(data);
+        setPages(res.data.pages || 1);
+        setNoMatch(data.length === 0);
       })
       .catch((err) => {
-        console.error("Error fetching attendance:", err);
-      })
-      .finally(() => setLoading(false));
+        console.error("Failed to fetch attendance", err);
+      });
   }, [eventId, currentPage, searchKey]);
 
   useEffect(() => {
     loadAttendance();
-  }, [currentPage, loadAttendance]);
+  }, [loadAttendance]);
 
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchKey(value);
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-      setCurrentPage(1);
-      loadAttendance();
-    }, 5000);
-  };
-
-  const handleAttendanceMark = (attendee) => {
+  const handleAttendance = (attendee) => {
     const payload = {
       attendeeId: attendee._id,
       eventId,
@@ -54,148 +49,143 @@ export default function AttendancePage() {
 
     markAttendance(payload)
       .then(() => {
-        setAttendanceList((prev) =>
-          prev.map((item) =>
-            item._id === attendee._id
-              ? {
-                  ...item,
-                  attendanceRecords: [
-                    ...item.attendanceRecords,
-                    { createdAt: new Date().toISOString() },
-                  ],
-                }
-              : item
-          )
-        );
+        alert("Attendance marked!");
+        loadAttendance();
       })
       .catch((err) => {
         console.error("Failed to mark attendance", err);
-        alert("Failed to mark attendance");
+        alert("Error marking attendance");
       });
   };
 
-  const toTitleCase = (str) =>
-    str
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchKey(value);
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      setCurrentPage(1);
+      loadAttendance();
+    }, 300);
+  };
+
+  const clearSearch = () => {
+    setSearchKey("");
+    setCurrentPage(1);
+    loadAttendance();
+  };
 
   const highlightMatch = (text) => {
-    if (!searchKey.trim()) return toTitleCase(text);
+    if (!searchKey.trim()) return text;
     const regex = new RegExp(`(${searchKey})`, "gi");
-    return toTitleCase(text).split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <mark key={i} className="bg-yellow-200">
+    return text.split(regex).map((part, i) =>
+      part.toLowerCase() === searchKey.toLowerCase() ? (
+        <span key={i} className="font-bold bg-yellow-200">
           {part}
-        </mark>
+        </span>
       ) : (
         part
       )
     );
   };
 
+  const logout = () => {
+    sessionStorage.removeItem("isLoggedIn");
+    navigate("/login");
+  };
+
   return (
-    <div className="max-w-5xl p-2 mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Registered Participants</h1>
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            value={searchKey}
-            onChange={handleSearchChange}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setCurrentPage(1);
-                loadAttendance();
-              }
-            }}
-            className="w-full px-3 py-2 pr-10 border rounded"
-          />
-          {searchKey.trim() && (
-            <button
-              onClick={() => {
-                setSearchKey("");
-                setCurrentPage(1);
-                loadAttendance();
-              }}
-              className="absolute text-gray-400 -translate-y-1/2 right-2 top-1/2 hover:text-black"
-              title="Clear search"
-            >
-              &times;
-            </button>
-          )}
-        </div>
+    <div className="min-h-screen p-4 text-gray-800 bg-white">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Attendance</h1>
+        <button
+          onClick={logout}
+          className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : noMatch ? (
-        <p className="text-center text-red-500">No match found.</p>
+      <div className="relative mb-4">
+        <input
+          type="text"
+          placeholder="Search by name, email or phone..."
+          value={searchKey}
+          onChange={handleSearchChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded"
+        />
+        {searchKey && (
+          <button
+            onClick={clearSearch}
+            className="absolute text-gray-500 right-3 top-2 hover:text-gray-800"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      {noMatch ? (
+        <p className="mt-10 text-center text-red-500">No match found.</p>
       ) : (
-        <>
-          <table className="w-full border border-gray-300">
-            <thead>
-              <tr className="text-sm text-left text-white bg-green-600">
-                <th className="p-4 border">#</th>
-                <th className="p-4 border">Full Name</th>
-                <th className="p-4 border">Email</th>
-                <th className="p-4 border">Phone</th>
-                <th className="p-4 border">Attendance</th>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border">
+            <thead className="text-white bg-green-600">
+              <tr>
+                <th className="p-2 border">Full Name</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Phone</th>
+                <th className="p-2 border">Attendance</th>
               </tr>
             </thead>
-            <tbody>
-              {attendanceList.map((attendee, index) => (
-                <tr key={attendee._id} className="text-sm bg-white">
-                  <td className="p-4 border">
-                    {(currentPage - 1) * 50 + index + 1}
-                  </td>
-                  <td className="p-2 border">
-                    {highlightMatch(attendee.fullName || "")}
-                  </td>
-                  <td className="p-2 border">
-                    {highlightMatch(attendee.email || "")}
-                  </td>
-                  <td className="p-2 border">{attendee.phoneNumber}</td>
-                  <td className="p-2 text-center border">
-                    <input
-                      type="checkbox"
-                      onChange={() => handleAttendanceMark(attendee)}
-                      checked={attendee.attendanceRecords.length > 0}
-                      disabled={attendee.attendanceRecords.length > 0}
-                    />
-                  </td>
-                </tr>
-              ))}
+            <tbody className="bg-white">
+              {attendanceList.map((attendee) => {
+                const isMarked = attendee.attendanceRecords?.length > 0;
+                return (
+                  <tr key={attendee._id}>
+                    <td className="p-2 border">
+                      {highlightMatch(attendee.fullName)}
+                    </td>
+                    <td className="p-2 border">
+                      {highlightMatch(attendee.email)}
+                    </td>
+                    <td className="p-2 border">
+                      {highlightMatch(attendee.phoneNumber)}
+                    </td>
+                    <td className="p-2 text-center border">
+                      <input
+                        type="checkbox"
+                        checked={isMarked}
+                        onChange={() => handleAttendance(attendee)}
+                        disabled={isMarked}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 text-sm bg-green-400 rounded hover:bg-green-300 disabled:opacity-50"
-            >
-              Prev
-            </button>
-            <span className="text-sm font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) =>
-                  prev < totalPages ? prev + 1 : prev
-                )
-              }
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 text-sm bg-green-300 rounded hover:bg-green-400 disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </>
+        </div>
       )}
+
+      {/* Pagination */}
+      <div className="flex justify-center gap-2 mt-4">
+        {Array.from({ length: pages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === i + 1
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
