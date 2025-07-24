@@ -115,25 +115,24 @@ export default function AttendancePage() {
     <div className="max-w-5xl p-2 mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Registered Participants</h1>
-      </div>
-
-      <div className="relative mb-4">
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          value={searchKey}
-          onChange={handleSearchChange}
-          className="w-full px-3 py-2 border rounded"
-        />
-        {searchKey && (
-          <button
-            onClick={clearSearch}
-            className="absolute text-gray-500 -translate-y-1/2 right-2 top-1/2 hover:text-black"
-            aria-label="Clear search"
-          >
-            &#10005;
-          </button>
-        )}
+        <div className="relative mb-4">
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={searchKey}
+            onChange={handleSearchChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+          {searchKey && (
+            <button
+              onClick={clearSearch}
+              className="absolute text-gray-500 -translate-y-1/2 right-2 top-1/2 hover:text-black"
+              aria-label="Clear search"
+            >
+              &#10005;
+            </button>
+          )}
+        </div>
       </div>
 
       {loading ? (
