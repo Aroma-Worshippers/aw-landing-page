@@ -84,10 +84,3 @@ If you'd like to suggest improvements, please open an issue or contact the team.
 ----------
 
 © 2025 Aroma Worshippers. All rights reserved.
-
-
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
-
----
