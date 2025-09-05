@@ -7,13 +7,9 @@
   Cache-Control: no-cache
 
 /*.js
-  Content-Encoding: br
-  Content-Encoding: gzip
   Cache-Control: public, max-age=31536000, immutable
 
 /*.css
-  Content-Encoding: br
-  Content-Encoding: gzip
   Cache-Control: public, max-age=31536000, immutable
 
 /*.svg
