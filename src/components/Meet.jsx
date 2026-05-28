@@ -13,7 +13,7 @@ export default function Meet() {
             <img
               src="/assets/G.O image.png"
               alt="Rev. Emmanuel Nwobodo (GodsOracle)"
-              className="max-w-full rounded-lg shadow-lg"
+              className="w-full max-w-sm rounded-lg shadow-lg"
               loading="lazy"
             />
           </div>
