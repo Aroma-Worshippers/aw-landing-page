@@ -1,5 +1,5 @@
-// Events.jsx - With animated button and School of Worship
-import { useState, useEffect } from "react";
+// Events.jsx - Clean pause on hover/touch, no extra indicators
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 export default function Events() {
@@ -30,36 +30,81 @@ export default function Events() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const timerRef = useRef(null);
 
-  // Auto-play
+  const hasMultipleEvents = events.length > 1;
+
+  // Auto-play with pause functionality
   useEffect(() => {
-    if (events.length <= 1) return;
-    if (!isAutoPlaying) return;
+    if (!hasMultipleEvents) return;
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % events.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, events.length]);
+  }, [isPaused, events.length, hasMultipleEvents]);
+
+  // Pause on hover (desktop)
+  const handleMouseEnter = () => {
+    if (hasMultipleEvents) setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (hasMultipleEvents) setIsPaused(false);
+  };
+
+  // Pause on touch (mobile)
+  const handleTouchStart = () => {
+    if (hasMultipleEvents) {
+      setIsPaused(true);
+      // Resume after 10 seconds of no interaction
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 10000);
+    }
+  };
 
   const nextSlide = () => {
-    if (events.length <= 1) return;
-    setIsAutoPlaying(false);
+    if (!hasMultipleEvents) return;
+    setIsPaused(true);
     setCurrentIndex((prev) => (prev + 1) % events.length);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 10000);
   };
 
   const prevSlide = () => {
-    if (events.length <= 1) return;
-    setIsAutoPlaying(false);
+    if (!hasMultipleEvents) return;
+    setIsPaused(true);
     setCurrentIndex((prev) => (prev - 1 + events.length) % events.length);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 10000);
+  };
+
+  const goToSlide = (index) => {
+    setIsPaused(true);
+    setCurrentIndex(index);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 10000);
   };
 
   const currentEvent = events[currentIndex];
-  const hasMultipleEvents = events.length > 1;
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
     <section className="px-4 py-12 bg-gray-50" id="events">
@@ -75,8 +120,13 @@ export default function Events() {
           </p>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative">
+        {/* Carousel Container with hover/touch events */}
+        <div
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+        >
           {/* Previous Button */}
           {hasMultipleEvents && (
             <button
@@ -243,11 +293,7 @@ export default function Events() {
               {events.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => {
-                    setIsAutoPlaying(false);
-                    setCurrentIndex(idx);
-                    setTimeout(() => setIsAutoPlaying(true), 10000);
-                  }}
+                  onClick={() => goToSlide(idx)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     currentIndex === idx
                       ? "w-8 bg-[#00B425]"

@@ -1,10 +1,10 @@
-// About.jsx - Balanced image size with text
+// About.jsx - Text first on mobile, image beside on desktop
 export default function About() {
   return (
     <section id="about" className="px-4 py-12 m-auto max-w-7xl">
-      <div className="grid content-center grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:gap-12">
-        {/* Text Content - Takes more space */}
-        <div className="order-2 space-y-6 md:space-y-8 md:order-1">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+        {/* Text Content - FIRST on mobile (order-1), LEFT on desktop */}
+        <div className="order-1 space-y-6 md:order-1">
           {/* About Section */}
           <div>
             <h2 className="mb-2 text-xl font-bold uppercase md:text-2xl decoration-[#00B425] underline underline-offset-4">
@@ -33,11 +33,12 @@ export default function About() {
           </div>
         </div>
 
-        <div className="flex items-start justify-center order-1 md:order-2">
+        {/* Image - SECOND on mobile (order-2), RIGHT on desktop */}
+        <div className="flex justify-center order-2 md:order-2">
           <img
             src="/assets/aboutimg.png"
             alt="Aroma Worshippers Music Ministry Team"
-            className="w-3/4 max-w-[280px] md:max-w-[320px] lg:max-w-[380px] rounded-lg shadow-md"
+            className="w-full max-w-sm rounded-lg shadow-md md:max-w-md"
             loading="lazy"
           />
         </div>
