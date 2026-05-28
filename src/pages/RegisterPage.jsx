@@ -1,3 +1,4 @@
+// RegisterPage.jsx - Optimized typography and UX
 import React, { useState, useEffect } from "react";
 import { registerUser } from "../services/api";
 import axios from "axios";
@@ -5,15 +6,15 @@ import axios from "axios";
 export default function RegistrationPage() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false); 
-  const [errorMessage, setErrorMessage] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
-    axios.get(`$(BASE_URL)/`)
+    axios.get(`${BASE_URL}/`)
       .then(() => console.log('Backend is awake'))
-      .catch(() => console.log('Could not pingy backend'));
-  }, []);
+      .catch(() => console.log('Could not ping backend'));
+  }, [BASE_URL]);
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -31,14 +32,20 @@ export default function RegistrationPage() {
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Enter a valid email";
+      newErrors.email = "Enter a valid email address";
     }
     if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
+    if (!formData.church.trim()) newErrors.church = "Church name is required";
+    if (!formData.firstTimer) newErrors.firstTimer = "Please select an option";
     return newErrors;
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error for this field when user types
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -47,15 +54,17 @@ export default function RegistrationPage() {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
+    
     setErrors({});
     setLoading(true);
+    
     registerUser(
       formData,
       (res) => {
-        const user = res.data.data;
-        if (res.status === 201 && user) {
+        if (res.status === 201 && res.data.data) {
           setSubmitted(true);
           window.scrollTo({ top: 0, behavior: "smooth" });
           setFormData({
@@ -76,226 +85,194 @@ export default function RegistrationPage() {
       (error) => {
         console.error("Registration failed:", error);
         window.scrollTo({ top: 0, behavior: "smooth" });
-        const serverMsg =
-          error.response?.data?.message ||
-          "Something went wrong. Please try again.";
+        const serverMsg = error.response?.data?.message || "Something went wrong. Please try again.";
         setErrorMessage(serverMsg);
         setTimeout(() => setErrorMessage(""), 5000);
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          church: "",
-          firstTimer: "",
-        });
         setLoading(false);
       }
     );
   };
 
   return (
-    <section className="text-black bg-white">
-      <main className="max-w-6xl py-2 mx-auto">
-        <div className="mb-6">
+    <section className="py-8 bg-white">
+      <main className="max-w-4xl px-4 py-6 mx-auto md:px-6">
+        {/* Event Flyer */}
+        <div className="mb-8 overflow-hidden rounded-lg shadow-md">
           <img
             src="/assets/MMC (2).png"
-            alt="Flyer"
-            className="w-full max-h-[400px] object-cover"
+            alt="MMC 2025 Conference Flyer"
+            className="w-full object-cover max-h-[300px] md:max-h-[400px]"
+            loading="eager"
           />
         </div>
+
+        {/* Success Message */}
         {submitted && (
-          <div className="px-4 py-3 mb-6 text-green-700 bg-green-100 border border-green-400 rounded">
-            Registration successful
+          <div className="px-4 py-3 mb-6 text-sm text-green-700 bg-green-100 border border-green-400 rounded-lg md:text-base">
+            ✅ Registration successful! We'll send you more details via email.
           </div>
         )}
+
+        {/* Error Message */}
         {errorMessage && (
-          <div className="px-4 py-3 mb-6 text-red-700 bg-red-100 border border-red-400 rounded">
-            {errorMessage}
+          <div className="px-4 py-3 mb-6 text-sm text-red-700 bg-red-100 border border-red-400 rounded-lg md:text-base">
+            ❌ {errorMessage}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="p-4">
-          <section className="grid gap-6 mx-4 mb-8 md:grid-cols-2">
+
+        {/* Registration Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-5 md:grid-cols-2">
+            
             {/* First Name */}
             <div>
-              <label
-                htmlFor="firstName"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                First name
+              <label htmlFor="firstName" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                First name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="firstName"
                 id="firstName"
-                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
+                className={`w-full px-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B425] focus:border-transparent transition ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="John"
-                required
+                placeholder="Enter your first name"
                 value={formData.firstName}
                 onChange={handleChange}
               />
               {errors.firstName && (
-                <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
+                <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
               )}
             </div>
 
             {/* Last Name */}
             <div>
-              <label
-                htmlFor="lastName"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                Last name
+              <label htmlFor="lastName" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                Last name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="lastName"
                 id="lastName"
-                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
+                className={`w-full px-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B425] focus:border-transparent transition ${
                   errors.lastName ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="Doe"
-                required
+                placeholder="Enter your last name"
                 value={formData.lastName}
                 onChange={handleChange}
               />
               {errors.lastName && (
-                <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+                <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                Email address
+              <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                Email address <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
                 name="email"
                 id="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
+                className={`w-full px-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B425] focus:border-transparent transition ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Church */}
-            <div>
-              <label
-                htmlFor="church"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                Church
-              </label>
-              <input
-                type="text"
-                name="church"
-                id="church"
-                placeholder="Name of Church"
-                value={formData.church}
-                onChange={handleChange}
-                required
-                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
-                  errors.church ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.church && (
-                <p className="mt-1 text-sm text-red-500">{errors.church}</p>
+                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
               )}
             </div>
 
             {/* Phone Number */}
             <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                Phone number
+              <label htmlFor="phoneNumber" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                Phone number <span className="text-red-500">*</span>
               </label>
               <input
                 type="tel"
-                id="phoneNumber"
                 name="phoneNumber"
-                placeholder="Phone Number"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className={`text-gray-900 text-xl rounded-lg focus:outline-none focus:border-[#00B425] placeholder:text-sm placeholder:md:text-lg  block w-full p-2.5 border ${
+                id="phoneNumber"
+                className={`w-full px-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B425] focus:border-transparent transition ${
                   errors.phoneNumber ? "border-red-500" : "border-gray-300"
                 }`}
+                placeholder="0803 123 4567"
+                value={formData.phoneNumber}
+                onChange={handleChange}
               />
               {errors.phoneNumber && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.phoneNumber}
-                </p>
+                <p className="mt-1 text-xs text-red-500">{errors.phoneNumber}</p>
               )}
             </div>
 
-            {/* First Timer (Radio) */}
+            {/* Church */}
             <div>
-              <label
-                htmlFor="firstTimer"
-                className="block mb-2 text-xl font-medium md:text-2xl"
-              >
-                Is this your first time attending?
+              <label htmlFor="church" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                Church / Ministry <span className="text-red-500">*</span>
               </label>
-              <div>
-                <input
-                  type="radio"
-                  name="firstTimer"
-                  id="firstTimerYes"
-                  value="Yes"
-                  checked={formData.firstTimer === "Yes"}
-                  onChange={handleChange}
-                  required
-                />
-                <label
-                  htmlFor="firstTimerYes"
-                  className="inline-block ml-4 text-lg"
-                >
-                  Yes
-                </label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  name="firstTimer"
-                  id="firstTimerNo"
-                  value="No"
-                  checked={formData.firstTimer === "No"}
-                  onChange={handleChange}
-                  required
-                />
-                <label
-                  htmlFor="firstTimerNo"
-                  className="inline-block ml-4 text-lg"
-                >
-                  No
-                </label>
-              </div>
+              <input
+                type="text"
+                name="church"
+                id="church"
+                className={`w-full px-4 py-2.5 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B425] focus:border-transparent transition ${
+                  errors.church ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Name of your church"
+                value={formData.church}
+                onChange={handleChange}
+              />
+              {errors.church && (
+                <p className="mt-1 text-xs text-red-500">{errors.church}</p>
+              )}
             </div>
-          </section>
 
+            {/* First Timer */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+                First time attending MMC? <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="firstTimer"
+                    value="Yes"
+                    checked={formData.firstTimer === "Yes"}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-[#00B425]"
+                  />
+                  <span className="text-base">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="firstTimer"
+                    value="No"
+                    checked={formData.firstTimer === "No"}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-[#00B425]"
+                  />
+                  <span className="text-base">No</span>
+                </label>
+              </div>
+              {errors.firstTimer && (
+                <p className="mt-1 text-xs text-red-500">{errors.firstTimer}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`text-white font-medium rounded-lg text-2xl w-full md:w-70 m-auto inline-block px-5 py-2.5 text-center 
-    ${
-      loading
-        ? "bg-gray-400 cursor-wait"
-        : "bg-[#00B425] hover:bg-green-800 hover:cursor-pointer"
-    }
-  `}
+            className={`w-full md:w-auto px-8 py-3 text-base font-semibold text-white rounded-lg transition-all duration-200 mx-auto block ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#00B425] hover:bg-[#009620] hover:shadow-lg"
+            }`}
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
@@ -319,10 +296,10 @@ export default function RegistrationPage() {
                     d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16z"
                   />
                 </svg>
-                <span>Submitting...</span>
+                <span>Registering...</span>
               </div>
             ) : (
-              "Submit"
+              "Register Now"
             )}
           </button>
         </form>

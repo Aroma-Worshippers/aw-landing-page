@@ -1,46 +1,59 @@
+// Mission.jsx - Better typography
 import { FaRegCalendarAlt, FaRegUser } from "react-icons/fa";
 import { TbMicrophone2 } from "react-icons/tb";
 import { HiOutlineMusicNote } from "react-icons/hi";
+
 export default function Mission() {
+  const objectives = [
+    {
+      icon: FaRegCalendarAlt,
+      title: "To organise a monthly school of worship",
+      color: "bg-[#00B425]",
+    },
+    {
+      icon: FaRegUser,
+      title:
+        "To get seasoned, established and successful music ministers to speak at every school of worship",
+      color: "bg-[#00B425]",
+    },
+    {
+      icon: TbMicrophone2,
+      title:
+        "To have practical sessions with a vocal coach in every school of worship organised.",
+      color: "bg-[#00B425]",
+    },
+    {
+      icon: HiOutlineMusicNote,
+      title:
+        "To reach out to music teams in various churches to help build them musically",
+      color: "bg-[#00B425]",
+    },
+  ];
+
   return (
-    <>
-      <section className="p-5 bg-[#EDEDED80]">
-        <h2 className="p-2 text-xl font-bold text-center uppercase md:text-4xl">
+    <section className="py-12 px-4 bg-[#EDEDED80]">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="mb-2 text-xl font-bold text-center uppercase md:text-2xl">
           Our Missions and Objectives
         </h2>
-        <p className="text-lg font-semibold text-center">
+        <p className="mb-8 text-base text-center text-gray-700 md:text-lg">
           To accomplish this vision, we have set the following objectives
         </p>
-        <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-4">
-          <div className="p-6 text-center rounded bg-[#00B425] text-white">
-            <FaRegCalendarAlt className="text-4xl" />
-            <p className="mt-6 text-lg font-bold">
-              To organise a monthly school of worship
-            </p>
-          </div>
-          <div className="p-4 text-center text-white rounded bg-[#00B425]">
-            <FaRegUser className="text-4xl font-bold" />
-            <p className="mt-6 text-lg font-bold text-justify">
-              To get seasoned, established and successful music ministers to
-              speak at every school of worship
-            </p>
-          </div>
-          <div className="p-4 text-center text-white rounded bg-[#00B425]">
-            <TbMicrophone2 className="text-4xl" />
-            <p className="mt-6 text-lg font-bold text-justify">
-              To have practical sessions with a vocal coach in every school of
-              worship organised.
-            </p>
-          </div>
-          <div className="p-4 text-center rounded text-white bg-[#00B425]">
-            <HiOutlineMusicNote className="text-4xl" />
-            <p className="mt-6 text-lg font-bold text-justify">
-              To reach out to music teams in various churches to help build them
-              musically
-            </p>
-          </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {objectives.map((item, index) => (
+            <div
+              key={index}
+              className="p-6 text-center text-white transition-transform duration-300 rounded-lg hover:scale-105 bg-[#00B425]"
+            >
+              <item.icon className="mx-auto text-4xl" />
+              <p className="mt-4 text-base font-semibold leading-relaxed">
+                {item.title}
+              </p>
+            </div>
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

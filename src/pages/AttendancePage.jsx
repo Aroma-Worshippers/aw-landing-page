@@ -1,3 +1,4 @@
+// AttendancePage.jsx - Optimized typography and UX
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAttendance, markAttendance } from "../services/api";
@@ -33,20 +34,21 @@ export default function AttendancePage() {
       })
       .catch((err) => {
         console.error("Error fetching attendance:", err);
+        setNoMatch(true);
       })
       .finally(() => setLoading(false));
   }, [eventId, currentPage, searchKey]);
 
-  // Trigger fetch when currentPage or searchKey changes
   useEffect(() => {
     loadAttendance();
   }, [loadAttendance]);
 
-  // Debounced search input
+  // Debounced search
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchKey(value);
     setCurrentPage(1);
+    
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       loadAttendance();
@@ -59,7 +61,7 @@ export default function AttendancePage() {
     loadAttendance();
   };
 
-  const handleAttendanceMark = (attendee) => {
+  const handleAttendanceMark = async (attendee) => {
     const payload = {
       attendeeId: attendee._id,
       eventId,
@@ -69,26 +71,25 @@ export default function AttendancePage() {
       attendeePhoneNumber: attendee.phoneNumber,
     };
 
-    markAttendance(payload)
-      .then(() => {
-        setAttendanceList((prev) =>
-          prev.map((item) =>
-            item._id === attendee._id
-              ? {
-                  ...item,
-                  attendanceRecords: [
-                    ...item.attendanceRecords,
-                    { createdAt: new Date().toISOString() },
-                  ],
-                }
-              : item
-          )
-        );
-      })
-      .catch((err) => {
-        console.error("Failed to mark attendance", err);
-        alert("Failed to mark attendance");
-      });
+    try {
+      await markAttendance(payload);
+      setAttendanceList((prev) =>
+        prev.map((item) =>
+          item._id === attendee._id
+            ? {
+                ...item,
+                attendanceRecords: [
+                  ...item.attendanceRecords,
+                  { createdAt: new Date().toISOString() },
+                ],
+              }
+            : item
+        )
+      );
+    } catch (err) {
+      console.error("Failed to mark attendance", err);
+      alert("Failed to mark attendance. Please try again.");
+    }
   };
 
   const toTitleCase = (str) =>
@@ -102,7 +103,7 @@ export default function AttendancePage() {
     const regex = new RegExp(`(${searchKey})`, "gi");
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <mark key={i} className="bg-yellow-300">
+        <mark key={i} className="bg-yellow-200 px-0.5 rounded">
           {part}
         </mark>
       ) : (
@@ -112,93 +113,133 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="max-w-5xl p-2 mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Registered Participants</h1>
-        <div className="relative mb-4">
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            value={searchKey}
-            onChange={handleSearchChange}
-            className="w-full px-3 py-2 border rounded"
-          />
-          {searchKey && (
-            <button
-              onClick={clearSearch}
-              className="absolute text-gray-500 -translate-y-1/2 right-2 top-1/2 hover:text-black"
-              aria-label="Clear search"
-            >
-              &#10005;
-            </button>
-          )}
+    <div className="min-h-screen px-4 py-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
+            Registered Participants
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage and track attendance for MMC 2025
+          </p>
         </div>
-      </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : noMatch ? (
-        <p>No match found.</p>
-      ) : (
-        <>
-          <table className="w-full border border-gray-300">
-            <thead>
-              <tr className="text-sm text-left text-white bg-green-600">
-                <th className="p-4 border">#</th>
-                <th className="p-4 border">Full Name</th>
-                <th className="p-4 border">Email</th>
-                <th className="p-4 border">Phone</th>
-                <th className="p-4 border">Attendance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(attendanceList) &&
-                attendanceList.map((attendee, index) => (
-                  <tr key={attendee._id} className="text-sm bg-white">
-                    <td className="p-4 border">
-                      {(currentPage - 1) * 50 + index + 1}
-                    </td>
-                    <td className="p-2 border">
-                      {highlight(toTitleCase(attendee.fullName || ""))}
-                    </td>
-                    <td className="p-2 border">{highlight(attendee.email)}</td>
-                    <td className="p-2 border">{attendee.phoneNumber}</td>
-                    <td className="p-2 text-center border">
-                      <input
-                        type="checkbox"
-                        onChange={() => handleAttendanceMark(attendee)}
-                        checked={attendee.attendanceRecords.length > 0}
-                        disabled={attendee.attendanceRecords.length > 0}
-                      />
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 text-sm bg-green-400 rounded hover:bg-green-300 disabled:opacity-50"
-            >
-              Prev
-            </button>
-            <span className="text-sm font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-              }
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 text-sm bg-green-300 rounded hover:bg-green-400 disabled:opacity-50"
-            >
-              Next
-            </button>
+        {/* Search Bar */}
+        <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
+          <div className="relative w-full md:w-80">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchKey}
+              onChange={handleSearchChange}
+              className="w-full px-4 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+            {searchKey && (
+              <button
+                onClick={clearSearch}
+                className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
-        </>
-      )}
+          <div className="text-sm text-gray-500">
+            Total: {attendanceList.length} participants
+          </div>
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+            <span className="ml-3 text-gray-600">Loading participants...</span>
+          </div>
+        )}
+
+        {/* No Results */}
+        {!loading && noMatch && (
+          <div className="py-12 text-center">
+            <p className="text-gray-500">No participants found.</p>
+            {searchKey && (
+              <button
+                onClick={clearSearch}
+                className="mt-2 text-sm text-green-600 hover:underline"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Table */}
+        {!loading && !noMatch && attendanceList.length > 0 && (
+          <>
+            <div className="overflow-x-auto rounded-lg shadow">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr className="bg-green-700">
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">#</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Full Name</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Email</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Phone</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-center text-white md:text-base">Attendance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceList.map((attendee, index) => (
+                    <tr key={attendee._id} className="border-b hover:bg-gray-50 transition">
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {(currentPage - 1) * 50 + index + 1}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-800">
+                        {highlight(toTitleCase(attendee.fullName || ""))}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {highlight(attendee.email)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {attendee.phoneNumber}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleAttendanceMark(attendee)}
+                          checked={attendee.attendanceRecords?.length > 0}
+                          disabled={attendee.attendanceRecords?.length > 0}
+                          className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between gap-4 mt-6">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                ← Previous
+              </button>
+              <span className="text-sm text-gray-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                Next →
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

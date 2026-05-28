@@ -5,7 +5,7 @@ const BASE_URL =
 
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // ✅ send cookies with every request
+  withCredentials: true, 
 });
 
 export default api;
