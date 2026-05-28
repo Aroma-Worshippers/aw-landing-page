@@ -1,127 +1,86 @@
+# Aroma Worshippers
 
-# AW Landing Page
+Official website for **Aroma Worshippers Music Ministry**.
+Built with modern frontend tools to provide a clean, responsive, and user-friendly experience.
 
-A responsive, modern landing page for the Aroma Worshippers Music Ministry Intl, built with Vite, React, and Tailwind CSS.
-
----
-
-## 📦 Features
-
-- Fully responsive design (desktop, tablet, mobile)
-- Hero section with video carousel (Swiper)
-- Gallery with lazy-loading and hover effects
-- Sections: About, Gallery, Events, Register, Footer
-- Global `Header` and navigation across multiple pages
-- Form with validation and integration-ready structure
-- Node.js-ready API layer (`src/services/api.js`)
-- Git LFS support for large assets (e.g. media files)
+🌐 **Live Site:** [aromaworshippers.com](https://www.aromaworshippers.com)
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Front-end**: React, Vite, Tailwind CSS v4, Swiper
-- **Form handling**: Controlled components with validation
-- **API**: `src/services/api.js` stub (mock, ready for Node.js backend)
-- **Assets**: Managed via Git LFS (.mp4, images, etc.)
-- **Version control**: Git with `.gitattributes` and `.gitignore`
+## 🚀 Tech Stack
+- **Framework:** [React](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Deployment:** [Netlify](https://www.netlify.com/)
 
 ---
 
-## 🚀 Getting Started
-
-1. Clone the repo:
-
-    ```bash
-    git clone https://github.com/Aroma-Worshippers/aw-landing-page.git
-    cd aw-landing-page
-    ```
-
-2. Install dependencies:
-
-    ```bash
-    npm install
-    ```
-
-3. Track large files with Git LFS (if not already set up):
-
-    ```bash
-    git lfs install
-    git lfs track "*.mp4"
-    ```
-
-4. Run the development server:
-
-    ```bash
-    npm run dev
-    ```
-
-5. Visit the app at `http://localhost:5173`
+## 📌 Features
+- 🎨 Responsive landing page with hero video background
+- 📝 Conference registration form with attendee data capture
+- 📊 Admin dashboard for attendance tracking (3-day conference)
+- 🔑 Login/logout functionality for admins
+- ⏱️ Optimized performance with caching & compression headers
 
 ---
 
-## 🧩 Project Structure
-
-```text
-.
-├── public/                  # Static assets like images, videos, and overlay logos
-├── src/
-│   ├── components/          # Shared UI: Header, Gallery, VideoSwiper, etc.
-│   ├── pages/               # Route pages: LandingPage.jsx, RegisterPage.jsx
-│   ├── services/
-│   │   └── api.js           # API abstraction (swap mock for real backend)
-│   ├── App.jsx              # Main layout and Router setup
-│   └── main.jsx             # Entrypoint including BrowserRouter
-├── .gitattributes           # Git LFS settings
-├── .gitignore
-├── tailwind.config.js
-├── vite.config.js
-└── package.json
-```
-
----
-
-## 🧪 Simulating the API
-
-The frontend calls `registerUser` from `src/services/api.js`, which currently returns a mock response. 
-
-```js
-// src/services/api.js
-
-export const registerUser = async (data) => {
-  // mock: simulate API delay
-  return new Promise((resolve) => {
-    setTimeout(() => resolve({ success: true, message: "Registered (mock)" }), 1000);
-  });
-};
-```
-
----
-
-## ✅ Validation & UX
-
-The registration form includes:
-
-- Required fields check
-- Email format validation
-- Inline error messages
-- UI states: success message, scrolling to top, form reset
-
----
-
-## 🧭 Deployment
-
-Suitable for platforms like Vercel, Netlify, or Surge:
+## ⚙️ Local Development
+To run the project locally:
 
 ```bash
-npm run build
-npm run preview  # to verify production build locally
+# Clone the repository
+git clone https://github.com/yourusername/aroma-worshippers.git
+
+# Navigate into the project folder
+cd aroma-worshippers
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
 ```
 
----
+The site should now be running on [http://localhost:5173](http://localhost:5173/).
 
-## 📄 License
+* * * * *
 
-This project is open-source and available under the [MIT License](LICENSE).
+📂 Project Structure
+--------------------
 
----
+```
+/src
+  /components   → Reusable UI components
+  /pages        → Landing, Registration, Admin pages
+  /assets       → Images, videos, and static files
+  api.js        → API integration for attendance & login
+
+```
+
+* * * * *
+
+📦 Deployment
+-------------
+
+This project is deployed on **Netlify**.\
+Custom headers (`_headers` file) are configured for:
+
+-   Caching of static assets
+
+-   Efficient loading of videos and images
+
+* * * * *
+
+🤝 Contribution
+---------------
+
+This is currently a private project maintained by the Aroma Worshippers dev team.\
+If you'd like to suggest improvements, please open an issue or contact the team.
+
+* * * * *
+
+📄 License
+----------
+
+© 2025 Aroma Worshippers. All rights reserved.
