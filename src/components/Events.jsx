@@ -12,7 +12,7 @@ export default function Events() {
       location: "Enugu, Nigeria",
       description:
         "A 3-day conference designed to equip and empower music ministers for kingdom advancement. Find full details in the flier.",
-      image: "/assets/MMC (2).png",
+      image: "/assets/MMC.png",
       registerLink: "/register",
       featured: true,
     },

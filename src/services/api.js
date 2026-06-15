@@ -10,11 +10,11 @@ const api = axios.create({
 
 export default api;
 
-// ✅ Register user
+
 export const registerUser = (formData, onSuccess, onError) => {
   const payload = {
-    eventId: "6869a1bae4d091c65d16712a",
-    eventName: "mmc 2025",
+    eventId: "6a2cda72a40f4e6c213ab50c",
+    eventName: "mmc 2026",
     firstName: formData.firstName,
     lastName: formData.lastName,
     email: formData.email,
@@ -35,7 +35,6 @@ export const registerUser = (formData, onSuccess, onError) => {
     });
 };
 
-// ✅ Fetch Attendance
 export function fetchAttendance(eventId, page, searchKey) {
   let url = `/events/attendance/${eventId}`;
   const params = [];
@@ -47,7 +46,7 @@ export function fetchAttendance(eventId, page, searchKey) {
     url += "?" + params.join("&");
   }
 
-  return api.get(url); // ✅ uses api instance (sends cookie)
+  return api.get(url);
 }
 
 // ✅ Mark Attendance

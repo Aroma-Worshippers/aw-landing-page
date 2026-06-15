@@ -65,7 +65,7 @@ export default function AttendancePage() {
     const payload = {
       attendeeId: attendee._id,
       eventId,
-      eventName: "mmc 2025",
+      eventName: "mmc 2026",
       attendeeFullName: attendee.fullName,
       attendeeEmail: attendee.email,
       attendeePhoneNumber: attendee.phoneNumber,
@@ -114,14 +114,14 @@ export default function AttendancePage() {
 
   return (
     <div className="min-h-screen px-4 py-8 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
             Registered Participants
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage and track attendance for MMC 2025
+          <p className="mt-1 text-sm text-gray-500">
+            Manage and track attendance for MMC
           </p>
         </div>
 
@@ -153,7 +153,7 @@ export default function AttendancePage() {
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-green-500 rounded-full border-t-transparent animate-spin" />
             <span className="ml-3 text-gray-600">Loading participants...</span>
           </div>
         )}
@@ -189,7 +189,7 @@ export default function AttendancePage() {
                 </thead>
                 <tbody>
                   {attendanceList.map((attendee, index) => (
-                    <tr key={attendee._id} className="border-b hover:bg-gray-50 transition">
+                    <tr key={attendee._id} className="transition border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {(currentPage - 1) * 50 + index + 1}
                       </td>
@@ -222,7 +222,7 @@ export default function AttendancePage() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-4 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 ← Previous
               </button>
@@ -232,7 +232,7 @@ export default function AttendancePage() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-4 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next →
               </button>

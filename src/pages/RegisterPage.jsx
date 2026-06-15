@@ -99,8 +99,8 @@ export default function RegistrationPage() {
         {/* Event Flyer */}
         <div className="mb-8 overflow-hidden rounded-lg shadow-md">
           <img
-            src="/assets/MMC (2).png"
-            alt="MMC 2025 Conference Flyer"
+            src="/assets/MMC.png"
+            alt="MMC 2026 Conference Flyer"
             className="w-full object-cover max-h-[300px] md:max-h-[400px]"
             loading="eager"
           />
