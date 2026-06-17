@@ -12,7 +12,7 @@ export default function AttendancePage() {
   const [noMatch, setNoMatch] = useState(false);
   const debounceRef = useRef(null);
   const navigate = useNavigate();
-  const eventId = "6869a1bae4d091c65d16712a";
+  const eventId = "6a2cda72a40f4e6c213ab50c";
 
   // Redirect if not logged in
   useEffect(() => {
