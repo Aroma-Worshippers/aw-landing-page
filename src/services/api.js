@@ -1,4 +1,6 @@
 import axios from "axios";
+const EVENT_ID = "6a2cda72a40f4e6c213ab50c";
+const EVENT_NAME = "mmc 2026";
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://aw-api.onrender.com";
@@ -10,11 +12,10 @@ const api = axios.create({
 
 export default api;
 
-
 export const registerUser = (formData, onSuccess, onError) => {
   const payload = {
-    eventId: "6a2cda72a40f4e6c213ab50c",
-    eventName: "mmc 2026",
+    eventId: EVENT_ID,
+    eventName: EVENT_NAME,
     firstName: formData.firstName,
     lastName: formData.lastName,
     email: formData.email,
@@ -35,8 +36,8 @@ export const registerUser = (formData, onSuccess, onError) => {
     });
 };
 
-export function fetchAttendance(eventId, page, searchKey) {
-  let url = `/events/attendance/${eventId}`;
+export function fetchAttendance(page, searchKey) {
+  let url = `/events/attendance/${EVENT_ID}`;
   const params = [];
   if (page) params.push(`page=${page}`);
   if (searchKey.trim())

@@ -12,7 +12,6 @@ export default function AttendancePage() {
   const [noMatch, setNoMatch] = useState(false);
   const debounceRef = useRef(null);
   const navigate = useNavigate();
-  const eventId = "6a2cda72a40f4e6c213ab50c";
 
   // Redirect if not logged in
   useEffect(() => {
@@ -25,7 +24,7 @@ export default function AttendancePage() {
   // Fetch attendance
   const loadAttendance = useCallback(() => {
     setLoading(true);
-    fetchAttendance(eventId, currentPage, searchKey)
+    fetchAttendance(currentPage, searchKey)
       .then((res) => {
         const data = res.data.data.attendanceList;
         setAttendanceList(data);
@@ -37,7 +36,7 @@ export default function AttendancePage() {
         setNoMatch(true);
       })
       .finally(() => setLoading(false));
-  }, [eventId, currentPage, searchKey]);
+  }, [currentPage, searchKey]);
 
   useEffect(() => {
     loadAttendance();
@@ -64,8 +63,6 @@ export default function AttendancePage() {
   const handleAttendanceMark = async (attendee) => {
     const payload = {
       attendeeId: attendee._id,
-      eventId,
-      eventName: "mmc 2026",
       attendeeFullName: attendee.fullName,
       attendeeEmail: attendee.email,
       attendeePhoneNumber: attendee.phoneNumber,
