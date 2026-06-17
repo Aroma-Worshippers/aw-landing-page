@@ -2,7 +2,7 @@
 export default function About() {
   return (
     <section id="about" className="px-12 py-12 m-auto max-w-7xl">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+      <div className="grid grid-cols-1 gap-8 place-items-center md:grid-cols-2 md:gap-12">
         
         {/* Text Content - FIRST on mobile (order-1), LEFT on desktop */}
         <div className="order-1 space-y-6 md:order-1">
