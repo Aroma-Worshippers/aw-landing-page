@@ -10,11 +10,34 @@ export default function RegistrationPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
+  const scrollToFirstError = (errors) => {
+    const firstErrorField = Object.keys(errors)[0];
+  
+    const element = document.querySelector(
+      `[name="${firstErrorField}"]`
+    );
+  
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+  
+      element.focus();
+    }
+  };
+  
   useEffect(() => {
     axios.get(`${BASE_URL}/`)
       .then(() => console.log('Backend is awake'))
       .catch(() => console.log('Could not ping backend'));
   }, [BASE_URL]);
+  
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    });
+  }, []);
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -54,7 +77,7 @@ export default function RegistrationPage() {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToFirstError(formErrors);
       return;
     }
     
@@ -96,10 +119,18 @@ export default function RegistrationPage() {
   return (
     <section className="py-8 bg-white">
       <main className="max-w-4xl px-4 py-6 mx-auto md:px-6">
-        {/* Event Flyer */}
+        <div className="mb-6 ">
+          <h2 className="text-2xl font-bold text-gray-800 md:text-3xl">
+            Secure Your Spot
+          </h2>
+          <p className="mt-2 text-sm text-gray-600 md:text-base">
+            Registration is quick and easy. Once submitted, you'll receive your
+            confirmation and event details via email.
+          </p>
+        </div>
         <div className="mb-8 overflow-hidden rounded-lg shadow-md">
           <img
-            src="/assets/MMC.png"
+            src="/assets/mmclandscape.png"
             alt="MMC 2026 Conference Flyer"
             className="w-full object-cover max-h-[300px] md:max-h-[400px]"
             loading="eager"
@@ -123,10 +154,12 @@ export default function RegistrationPage() {
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-5 md:grid-cols-2">
-            
             {/* First Name */}
             <div>
-              <label htmlFor="firstName" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+              <label
+                htmlFor="firstName"
+                className="block mb-2 text-sm font-semibold text-gray-700 md:text-base"
+              >
                 First name <span className="text-red-500">*</span>
               </label>
               <input
@@ -147,7 +180,10 @@ export default function RegistrationPage() {
 
             {/* Last Name */}
             <div>
-              <label htmlFor="lastName" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+              <label
+                htmlFor="lastName"
+                className="block mb-2 text-sm font-semibold text-gray-700 md:text-base"
+              >
                 Last name <span className="text-red-500">*</span>
               </label>
               <input
@@ -168,7 +204,10 @@ export default function RegistrationPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-semibold text-gray-700 md:text-base"
+              >
                 Email address <span className="text-red-500">*</span>
               </label>
               <input
@@ -189,7 +228,10 @@ export default function RegistrationPage() {
 
             {/* Phone Number */}
             <div>
-              <label htmlFor="phoneNumber" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+              <label
+                htmlFor="phoneNumber"
+                className="block mb-2 text-sm font-semibold text-gray-700 md:text-base"
+              >
                 Phone number <span className="text-red-500">*</span>
               </label>
               <input
@@ -204,13 +246,18 @@ export default function RegistrationPage() {
                 onChange={handleChange}
               />
               {errors.phoneNumber && (
-                <p className="mt-1 text-xs text-red-500">{errors.phoneNumber}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.phoneNumber}
+                </p>
               )}
             </div>
 
             {/* Church */}
             <div>
-              <label htmlFor="church" className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
+              <label
+                htmlFor="church"
+                className="block mb-2 text-sm font-semibold text-gray-700 md:text-base"
+              >
                 Church / Ministry <span className="text-red-500">*</span>
               </label>
               <input
@@ -232,7 +279,8 @@ export default function RegistrationPage() {
             {/* First Timer */}
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-700 md:text-base">
-                First time attending MMC? <span className="text-red-500">*</span>
+                First time attending MMC?{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -268,10 +316,10 @@ export default function RegistrationPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full md:w-auto px-8 py-3 text-base font-semibold text-white rounded-lg transition-all duration-200 mx-auto block ${
+            className={`w-full md:w-auto px-10 py-4 text-lg font-bold text-white rounded-xl transition-all duration-200 mx-auto block ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#00B425] hover:bg-[#009620] hover:shadow-lg"
+                : "bg-[#00B425] hover:bg-[#009620] hover:shadow-xl hover:scale-[1.02] cursor-pointer"
             }`}
           >
             {loading ? (
