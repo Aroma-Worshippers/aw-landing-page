@@ -40,9 +40,9 @@ export function fetchAttendance(page, searchKey) {
   let url = `/events/attendance/${EVENT_ID}`;
   const params = [];
   if (page) params.push(`page=${page}`);
-  if (searchKey.trim())
+  if (searchKey && searchKey.trim()) {
     params.push(`searchKey=${encodeURIComponent(searchKey.trim())}`);
-
+  }
   if (params.length > 0) {
     url += "?" + params.join("&");
   }
@@ -52,7 +52,11 @@ export function fetchAttendance(page, searchKey) {
 
 // ✅ Mark Attendance
 export const markAttendance = (payload) => {
-  return api.post("/events/attendance", payload);
+  return api.post("/events/attendance", {
+    ...payload,
+    eventId: EVENT_ID,
+    eventName: EVENT_NAME,
+  });
 };
 
 // ✅ Login

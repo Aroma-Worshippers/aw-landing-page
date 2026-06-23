@@ -1,4 +1,3 @@
-// AttendancePage.jsx - Optimized typography and UX
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAttendance, markAttendance } from "../services/api";
@@ -10,6 +9,8 @@ export default function AttendancePage() {
   const [searchKey, setSearchKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [noMatch, setNoMatch] = useState(false);
+  const [totalParticipants, setTotalParticipants] = useState(0);
+  const [expandedCard, setExpandedCard] = useState(null);
   const debounceRef = useRef(null);
   const navigate = useNavigate();
 
@@ -20,37 +21,50 @@ export default function AttendancePage() {
       navigate("/login");
     }
   }, [navigate]);
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [currentPage]);
 
   // Fetch attendance
-  const loadAttendance = useCallback(() => {
+  const loadAttendance = useCallback((page, key) => {
     setLoading(true);
-    fetchAttendance(currentPage, searchKey)
+
+    fetchAttendance(page, key)
       .then((res) => {
         const data = res.data.data.attendanceList;
+
         setAttendanceList(data);
         setTotalPages(res.data.data.pages);
+        setTotalParticipants(res.data.data.total);
         setNoMatch(data.length === 0);
       })
       .catch((err) => {
-        console.error("Error fetching attendance:", err);
+        console.error(err);
         setNoMatch(true);
       })
       .finally(() => setLoading(false));
-  }, [currentPage, searchKey]);
+  }, []);
 
   useEffect(() => {
     loadAttendance();
   }, [loadAttendance]);
 
+  const toggleCard = (id) => {
+    setExpandedCard((prev) => (prev === id ? null : id));
+  };
+  
   // Debounced search
   const handleSearchChange = (e) => {
     const value = e.target.value;
+
     setSearchKey(value);
     setCurrentPage(1);
-    
+
     clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
-      loadAttendance();
+      loadAttendance(1, value);
     }, 300);
   };
 
@@ -113,37 +127,40 @@ export default function AttendancePage() {
     <div className="min-h-screen px-4 py-8 bg-gray-50">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
-            Registered Participants
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Manage and track attendance for MMC
-          </p>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
-          <div className="relative w-full md:w-80">
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={searchKey}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-            {searchKey && (
-              <button
-                onClick={clearSearch}
-                className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
-                aria-label="Clear search"
-              >
-                ✕
-              </button>
-            )}
+        <div className="flex flex-col justify-between md:flex-row">
+          <div className="mb-3">
+            <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
+              Registered Participants
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Manage and track attendance for MMC
+            </p>
           </div>
-          <div className="text-sm text-gray-500">
-            Total: {attendanceList.length} participants
+          {/* Search Bar */}
+          <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
+            <div className="relative w-full md:w-80">
+              <input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchKey}
+                onChange={handleSearchChange}
+                className="w-full px-4 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              {searchKey && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <div className="text-sm text-gray-500">
+              <p className="font-bold">
+                Total registered participants: {totalParticipants}{" "}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -173,20 +190,33 @@ export default function AttendancePage() {
         {/* Table */}
         {!loading && !noMatch && attendanceList.length > 0 && (
           <>
-            <div className="overflow-x-auto rounded-lg shadow">
-              <table className="min-w-full bg-white">
+            <div className="hidden overflow-x-auto rounded-lg shadow md:block">
+              <table className="min-w-full bg-white border border-gray-100">
                 <thead>
                   <tr className="bg-green-700">
-                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">#</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Full Name</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Email</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">Phone</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-center text-white md:text-base">Attendance</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">
+                      S/N
+                    </th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">
+                      Full Name
+                    </th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">
+                      Email
+                    </th>
+                    <th className="px-4 py-3 text-sm font-semibold text-left text-white md:text-base">
+                      Phone
+                    </th>
+                    <th className="px-4 py-3 text-sm font-semibold text-center text-white md:text-base">
+                      Attendance
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {attendanceList.map((attendee, index) => (
-                    <tr key={attendee._id} className="transition border-b hover:bg-gray-50">
+                    <tr
+                      key={attendee._id}
+                      className="transition-colors duration-150 border-b hover:bg-gray-100 odd:bg-gray-100 even:bg-green-100"
+                    >
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {(currentPage - 1) * 50 + index + 1}
                       </td>
@@ -200,18 +230,72 @@ export default function AttendancePage() {
                         {attendee.phoneNumber}
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <input
-                          type="checkbox"
-                          onChange={() => handleAttendanceMark(attendee)}
-                          checked={attendee.attendanceRecords?.length > 0}
-                          disabled={attendee.attendanceRecords?.length > 0}
-                          className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-                        />
+                        {attendee.attendanceRecords?.length > 0 ? (
+                          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                            ✔ Checked In
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleAttendanceMark(attendee)}
+                            className="px-3 py-2 text-xs font-semibold text-white bg-gray-700 rounded-full hover:bg-gray-800 hover:cursor-pointer"
+                          >
+                            Mark Attendance
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="grid gap-4 md:hidden">
+              {attendanceList.map((attendee) => {
+                const isExpanded = expandedCard === attendee._id;
+
+                return (
+                  <div
+                    key={attendee._id}
+                    className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm"
+                  >
+                    {/* ALWAYS VISIBLE: NAME */}
+                    <button
+                      onClick={() => toggleCard(attendee._id)}
+                      className="flex items-center justify-between w-full"
+                    >
+                      <div className="text-sm font-semibold text-left text-gray-800">
+                        {toTitleCase(attendee.fullName || "")}
+                      </div>
+
+                      <span className="text-gray-400">
+                        {isExpanded ? "▲" : "▼"}
+                      </span>
+                    </button>
+
+                    {/* COLLAPSIBLE CONTENT */}
+                    {isExpanded && (
+                      <div className="mt-3 space-y-2 text-sm text-gray-600">
+                        <div>{attendee.email}</div>
+                        <div>{attendee.phoneNumber}</div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          {attendee.attendanceRecords?.length > 0 ? (
+                            <span className="px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                              ✔ Checked In
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleAttendanceMark(attendee)}
+                              className="px-3 py-2 text-xs font-semibold text-white bg-gray-700 rounded-full hover:bg-gray-800"
+                            >
+                              Mark Attendance
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Pagination */}
@@ -227,7 +311,9 @@ export default function AttendancePage() {
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
