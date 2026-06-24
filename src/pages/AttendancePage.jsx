@@ -47,9 +47,9 @@ export default function AttendancePage() {
   }, []);
 
   useEffect(() => {
-    loadAttendance();
-  }, [loadAttendance]);
-
+    loadAttendance(currentPage, searchKey);
+  }, [currentPage, searchKey, loadAttendance]);
+  
   const toggleCard = (id) => {
     setExpandedCard((prev) => (prev === id ? null : id));
   };

@@ -40,13 +40,12 @@ export function fetchAttendance(page, searchKey) {
   let url = `/events/attendance/${EVENT_ID}`;
   const params = [];
   if (page) params.push(`page=${page}`);
-  if (searchKey && searchKey.trim()) {
+  if (searchKey?.trim()) {
     params.push(`searchKey=${encodeURIComponent(searchKey.trim())}`);
   }
   if (params.length > 0) {
     url += "?" + params.join("&");
   }
-
   return api.get(url);
 }
 
