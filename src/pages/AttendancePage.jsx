@@ -10,7 +10,6 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(false);
   const [noMatch, setNoMatch] = useState(false);
   const [totalParticipants, setTotalParticipants] = useState(0);
-  const [expandedCard, setExpandedCard] = useState(null);
   const debounceRef = useRef(null);
   const navigate = useNavigate();
 
@@ -49,10 +48,7 @@ export default function AttendancePage() {
   useEffect(() => {
     loadAttendance(currentPage, searchKey);
   }, [currentPage, searchKey, loadAttendance]);
-  
-  const toggleCard = (id) => {
-    setExpandedCard((prev) => (prev === id ? null : id));
-  };
+
   
   // Debounced search
   const handleSearchChange = (e) => {
@@ -237,7 +233,7 @@ export default function AttendancePage() {
                         ) : (
                           <button
                             onClick={() => handleAttendanceMark(attendee)}
-                            className="px-3 py-2 text-xs font-semibold text-white bg-gray-700 rounded-full hover:bg-gray-800 hover:cursor-pointer"
+                            className="px-4 py-2 text-sm font-medium text-white transition bg-green-700 rounded-lg hover:bg-green-800"
                           >
                             Mark Attendance
                           </button>
@@ -248,54 +244,57 @@ export default function AttendancePage() {
                 </tbody>
               </table>
             </div>
+            {/* Mobile card view */}
             <div className="grid gap-4 md:hidden">
-              {attendanceList.map((attendee) => {
-                const isExpanded = expandedCard === attendee._id;
-
-                return (
-                  <div
-                    key={attendee._id}
-                    className="p-4 bg-white border border-gray-100 rounded-lg shadow-sm"
-                  >
-                    {/* ALWAYS VISIBLE: NAME */}
-                    <button
-                      onClick={() => toggleCard(attendee._id)}
-                      className="flex items-center justify-between w-full"
-                    >
-                      <div className="text-sm font-semibold text-left text-gray-800">
-                        {toTitleCase(attendee.fullName || "")}
-                      </div>
-
-                      <span className="text-gray-400">
-                        {isExpanded ? "▲" : "▼"}
-                      </span>
-                    </button>
-
-                    {/* COLLAPSIBLE CONTENT */}
-                    {isExpanded && (
-                      <div className="mt-3 space-y-2 text-sm text-gray-600">
-                        <div>{attendee.email}</div>
-                        <div>{attendee.phoneNumber}</div>
-
-                        <div className="flex items-center justify-between pt-2">
-                          {attendee.attendanceRecords?.length > 0 ? (
-                            <span className="px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
-                              ✔ Checked In
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleAttendanceMark(attendee)}
-                              className="px-3 py-2 text-xs font-semibold text-white bg-gray-700 rounded-full hover:bg-gray-800"
-                            >
-                              Mark Attendance
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
+              {attendanceList.map((attendee) => (
+                <div
+                  key={attendee._id}
+                  className="p-4 bg-white border border-gray-100 shadow-sm rounded-xl"
+                >
+                  {/* Name */}
+                  <div className="mb-3">
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {toTitleCase(attendee.fullName || "")}
+                    </h3>
                   </div>
-                );
-              })}
+
+                  {/* Contact Details */}
+                  <div className="flex-row justify-around gap-10 space-y-2 xs:flex-col">
+                    <div>
+                      <p className="text-xs font-medium tracking-wide text-gray-400 uppercase">
+                        Email
+                      </p>
+                      <p className="text-sm text-gray-700 break-all">
+                        {attendee.email}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-medium tracking-wide text-gray-400 uppercase">
+                        Phone
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        {attendee.phoneNumber}
+                      </p>
+                    </div>
+                    {/* Attendance Status */}
+                    <div className="flex items-center justify-between">
+                      {attendee.attendanceRecords?.length > 0 ? (
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                          ✔ Checked In
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleAttendanceMark(attendee)}
+                          className="px-4 py-2 text-sm font-medium text-white transition bg-green-700 rounded-lg hover:bg-green-800"
+                        >
+                          Mark Attendance
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Pagination */}
