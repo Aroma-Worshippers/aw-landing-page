@@ -73,7 +73,7 @@ export function mmcEventJsonLd() {
     },
     offers: {
       "@type": "Offer",
-      url: `${SITE.url}/register.html`,
+      url: `${SITE.url}/register`,
       availability: "https://schema.org/InStock",
     },
   };
