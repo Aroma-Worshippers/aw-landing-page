@@ -9,7 +9,7 @@ export default function Gallery() {
   const images = Array.from({ length: totalImages }, (_, i) => ({
     id: i,
     src: `/assets/gallery${i + 1}.png`,
-    alt: `Gallery image ${i + 1}`,
+    alt: `Aroma Worshippers Music Ministry — worship and fellowship moment ${i + 1}`,
   }));
 
   // Keyboard navigation for lightbox

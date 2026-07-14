@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./index.css";
 import StaticHeader from "./components/StaticHeader.jsx";
 import StaticFooter from "./components/StaticFooter.jsx";
 import RegistrationPage from "./pages/RegisterPage.jsx";

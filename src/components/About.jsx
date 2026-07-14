@@ -1,4 +1,3 @@
-// About.jsx - Text first on mobile, image beside on desktop
 export default function About() {
   return (
     <section id="about" className="px-12 py-12 m-auto max-w-7xl">

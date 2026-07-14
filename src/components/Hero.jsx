@@ -40,6 +40,13 @@ export default function Hero() {
 
   return (
     <section className="overflow-x-hidden bg-gray-100 min-h-auto" id="home">
+      {/* The homepage had no h1 anywhere — search engines use it as the
+          primary on-page topic signal. sr-only keeps it invisible so the
+          video-first visual design is unchanged. */}
+      <h1 className="sr-only">
+        Aroma Worshippers Music Ministry — Raising Godly, Skilled Music
+        Ministers in Enugu, Nigeria
+      </h1>
       <div className="mx-auto">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -61,6 +68,7 @@ export default function Hero() {
                   <video
                     ref={(el) => (videoRefs.current[index] = el)}
                     src={video.src}
+                    poster={video.overlay}
                     className="w-full"
                     loop
                     muted

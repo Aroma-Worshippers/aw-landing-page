@@ -16,17 +16,6 @@ export default function Events() {
       registerLink: "/register",
       featured: true,
     },
-    {
-      id: 2,
-      title: "Monthly School of Worship",
-      date: "31st May 2026",
-      location: "The Fathers' Delight International Ministries, Enugu, Nigeria",
-      description:
-        "A transformative program designed to equip worship leaders and music ministers with spiritual and practical skills for effective ministry.",
-      image: "/assets/sow.png",
-      registerLink: null,
-      featured: false,
-    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
